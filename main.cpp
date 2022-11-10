@@ -1,11 +1,50 @@
 #include <iostream>
 #include <filesystem>
 #include <algorithm>
+#include <vector>
 
 namespace fs = std::filesystem;
 
-const std::string KEY{"cypher"};
+const char KEY = 57;
 
+int encodeFile(const fs::path &filePath) {
+    std::error_code errorCode;
+    std::uintmax_t fileSize = fs::file_size(filePath, errorCode);
+    FILE *fp;
+
+    std::vector<char> buffer(fileSize);
+    fp = fopen(filePath.c_str(), "r");
+    if (!fp) {
+        std::cerr << "File opening in read failed\n";
+        return errno;
+    }
+
+    size_t bytesRead = fread(&buffer[0], 1, fileSize, fp);
+    if (bytesRead != fileSize) {
+        std::cerr << "File " << filePath << " size is " << fileSize << ", but has been read " << bytesRead << "\n";
+        return 1;
+    }
+    fclose(fp);
+
+    fp = fopen(filePath.c_str(), "w");
+    if (!fp) {
+        std::cerr << "File opening on write failed\n";
+        return errno;
+    }
+
+    for (size_t i = 0; i < fileSize; i++) {
+        buffer[i] ^= KEY;
+    }
+
+    size_t bytesWritten = fwrite(&buffer[0], 1, fileSize, fp);
+    if (bytesWritten != fileSize) {
+        std::cerr << "File " << filePath << " size is " << fileSize << ", but has been written " << bytesWritten
+                  << "\n";
+        return 1;
+    }
+    fclose(fp);
+    return 0;
+}
 
 int main(int argc, char **argv) {
     std::string targetPath;
@@ -13,13 +52,13 @@ int main(int argc, char **argv) {
     // Check if there is a valid argument number
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " [target path]" << std::endl;
-        return -EINVAL;
+        exit(EXIT_FAILURE);
     }
 
     targetPath = argv[1];
     for (const auto &dirEntry: fs::recursive_directory_iterator(targetPath)) {
-        if (dirEntry.is_regular_file()) {
-            // XOR the file content
+        if (!dirEntry.is_directory()) {
+            encodeFile(dirEntry.path());
         }
         std::cout << dirEntry.path() << std::endl;
     }
