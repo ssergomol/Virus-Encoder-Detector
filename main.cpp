@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <vector>
+#include <bitset>
 
 namespace fs = std::filesystem;
 
@@ -13,12 +14,14 @@ int encodeFile(const fs::path &filePath) {
     FILE *fp;
 
     std::vector<char> buffer(fileSize);
+
     fp = fopen(filePath.c_str(), "r");
     if (!fp) {
         std::cerr << "File opening in read failed\n";
         return errno;
     }
 
+    // Copy file content to buffer
     size_t bytesRead = fread(&buffer[0], 1, fileSize, fp);
     if (bytesRead != fileSize) {
         std::cerr << "File " << filePath << " size is " << fileSize << ", but has been read " << bytesRead << "\n";
@@ -26,16 +29,18 @@ int encodeFile(const fs::path &filePath) {
     }
     fclose(fp);
 
+    // Encode content in buffer
+    for (size_t i = 0; i < fileSize; i++) {
+        buffer[i] ^= KEY;
+    }
+
     fp = fopen(filePath.c_str(), "w");
     if (!fp) {
         std::cerr << "File opening on write failed\n";
         return errno;
     }
 
-    for (size_t i = 0; i < fileSize; i++) {
-        buffer[i] ^= KEY;
-    }
-
+    // Write encoded content back to file
     size_t bytesWritten = fwrite(&buffer[0], 1, fileSize, fp);
     if (bytesWritten != fileSize) {
         std::cerr << "File " << filePath << " size is " << fileSize << ", but has been written " << bytesWritten
