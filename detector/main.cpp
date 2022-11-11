@@ -71,12 +71,10 @@ void handle_event(int fan_fd) {
                 path[path_len] = '\0';
                 path_fs = path;
 
-
-                if (metadata->mask & FAN_CLOSE_NOWRITE) {
+                if (metadata->mask & FAN_ACCESS_PERM) {
                     printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
-
 
                     write(fan_fd, &response, sizeof(response));
 
@@ -130,6 +128,7 @@ void handle_event(int fan_fd) {
                 close(metadata->fd);
 
             }
+            metadata = FAN_EVENT_NEXT(metadata, len);
         }
     }
 }
@@ -150,7 +149,7 @@ int main(int argc, char **argv) {
     std::cout << "Check 1\n";
 
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
-                      FAN_CLOSE_NOWRITE | FAN_CLOSE_WRITE, AT_FDCWD,
+                      FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
         std::cerr << "Failed to mark file or directory\n";
         exit(EXIT_FAILURE);
