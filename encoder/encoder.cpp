@@ -7,6 +7,7 @@ namespace fs = std::filesystem;
 
 const char KEY = 57;
 
+// Encode files byte by byte using XOR encrypting
 int encodeFile(const fs::path &filePath) {
     std::error_code errorCode;
     std::uintmax_t fileSize = fs::file_size(filePath, errorCode);
