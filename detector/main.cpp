@@ -142,6 +142,7 @@ int main(int argc, char **argv) {
         std::cerr << "Failed to init fanotify watch queue\n";
         exit(EXIT_FAILURE);
     }
+    std::cout << "Check 1\n";
 
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
@@ -149,16 +150,19 @@ int main(int argc, char **argv) {
         std::cerr << "Failed to mark file or directory\n";
         exit(EXIT_FAILURE);
     }
+    std::cout << "Check 2\n";
 
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
     while (true) {
+        std::cout << "Before if in while\n";
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
         } else {
             counter++;
             std::cout << counter << " ";
         }
+        std::cout << "After if in while\n";
     }
 
     return 0;
