@@ -39,6 +39,7 @@ void handle_event(int fan_fd) {
     char path[PATH_MAX];
     ssize_t path_len;
     char procfd_path[PATH_MAX];
+    fs::path path_fs;
 
 
     while (true) {
@@ -66,6 +67,15 @@ void handle_event(int fan_fd) {
                     printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
+                    path_len = readlink(procfd_path, path, sizeof(path) - 1);
+                    if (path_len == -1) {
+                        std::cerr << "Failed to read link " << procfd_path << "\n";
+                        exit(EXIT_FAILURE);
+                    }
+
+                    path[path_len] = '\0';
+                    path_fs = path;
+
                     write(fan_fd, &response, sizeof(response));
 
 
@@ -108,14 +118,7 @@ void handle_event(int fan_fd) {
 //                    }
                 }
 
-                path_len = readlink(procfd_path, path, sizeof(path) - 1);
-                if (path_len == -1) {
-                    std::cerr << "Failed to read link " << procfd_path << "\n";
-                    exit(EXIT_FAILURE);
-                }
 
-                path[path_len] = '\0';
-                fs::path path_fs = path;
 
                 printf("File %s", path);
                 printf(" PID %d", metadata->pid);
