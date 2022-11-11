@@ -41,7 +41,6 @@ void handle_event(int fan_fd) {
     char procfd_path[PATH_MAX];
 
 
-
     while (true) {
         len = read(fan_fd, buf, sizeof(buf));
         if (len == -1 && errno != EAGAIN) {
@@ -61,16 +60,6 @@ void handle_event(int fan_fd) {
                 /* Retrieve and print pathname of the accessed file. */
                 snprintf(procfd_path, sizeof(procfd_path),
                          "/proc/self/fd/%d", metadata->fd);
-                path_len = readlink(procfd_path, path,
-                                    sizeof(path) - 1);
-
-                if (path_len == -1) {
-                    std::cerr << "Failed to read link " << procfd_path << "\n";
-                    exit(EXIT_FAILURE);
-                }
-
-                path[path_len] = '\0';
-                fs::path path_fs = path;
 
 
                 if (metadata->mask & FAN_ACCESS_PERM) {
@@ -78,6 +67,14 @@ void handle_event(int fan_fd) {
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
                     write(fan_fd, &response, sizeof(response));
+                    path_len = readlink(procfd_path, path, sizeof(path) - 1);
+                    if (path_len == -1) {
+                        std::cerr << "Failed to read link " << procfd_path << "\n";
+                        exit(EXIT_FAILURE);
+                    }
+
+                    path[path_len] = '\0';
+                    fs::path path_fs = path;
 
 //                    if (!access_path.contains(metadata->pid)) {
 //                        std::string oldPath = access_path[metadata->pid];
@@ -94,6 +91,14 @@ void handle_event(int fan_fd) {
                 }
 
                 if (metadata->mask & FAN_CLOSE_WRITE) {
+                    path_len = readlink(procfd_path, path, sizeof(path) - 1);
+                    if (path_len == -1) {
+                        std::cerr << "Failed to read link " << procfd_path << "\n";
+                        exit(EXIT_FAILURE);
+                    }
+
+                    path[path_len] = '\0';
+                    fs::path path_fs = path;
 //                    auto currentTime = ch::system_clock::now();
 //
 //                    if (access_file[path_fs.string()].first == metadata->pid) {
@@ -111,7 +116,7 @@ void handle_event(int fan_fd) {
 //                                }
 //                            }
 
-                            printf("FAN_CLOSE_WRITE: ");
+                    printf("FAN_CLOSE_WRITE: ");
 //                            susWrite.insert(access_path[metadata->pid], ch::system_clock::now());
 //                        }
 //
