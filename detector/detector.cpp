@@ -41,6 +41,7 @@ void terminate_executable(int pid) {
     std::remove(exePath);
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
+
 /*
  * The file is considered to be suspicious if the following conditions
  * are met:
