@@ -87,7 +87,28 @@ void handle_event(int fan_fd) {
                 }
 
                 if (metadata->mask & FAN_CLOSE_WRITE) {
-                    printf("FAN_CLOSE_WRITE: ");
+                    auto currentTime = ch::system_clock::now();
+
+                    if (access_file[path_fs.string()].first == metadata->pid) {
+                        auto timeDiff = ch::duration<double, std::milli>(
+                                 currentTime - access_file[path_fs.string()].second).count();
+
+                        if (timeDiff < 500) {
+                            if (susWrite.contains(access_path[metadata->pid])
+                            && ch::duration<double, std::milli>(
+                                    currentTime - susWrite[access_path[metadata->pid]]).count() < 500) {
+                                eventsCount++;
+                                if (eventsCount == SUS_EVENT_NUMB) {
+                                    std::cout << "Suspicious process: " << metadata->pid << "\n";
+                                    // terminate process
+                                }
+                            }
+
+                            printf("FAN_CLOSE_WRITE: ");
+                            susWrite.insert(access_path[metadata->pid], ch::system_clock::now());
+                        }
+
+                    }
                 }
 
                 printf("File %s", path);
