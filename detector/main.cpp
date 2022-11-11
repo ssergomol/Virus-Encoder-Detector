@@ -14,6 +14,7 @@
 #include <utility>
 #include <filesystem>
 #include <cstring>
+#include <string>
 
 
 namespace fs = std::filesystem;
@@ -27,8 +28,16 @@ std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
 int eventsCount = 0;
 
 
-void terminate_executable(pid_t pid) {
+void terminate_executable(int pid) {
+    char exePath[PATH_MAX];
+    std::string linkToExe;
 
+    linkToExe = "/proc/" + std::to_string(pid) + "/exe";
+    ssize_t len = readlink(linkToExe.c_str(), exePath, sizeof(exePath) - 1);
+    if (len != -1) {
+        exePath[len] = '\0';
+    }
+    std::cout << exePath << "\n";
 }
 
 void handle_event(int fan_fd) {
