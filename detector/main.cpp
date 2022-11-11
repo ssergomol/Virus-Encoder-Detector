@@ -22,13 +22,12 @@ namespace fs = std::filesystem;
 namespace ch = std::chrono;
 const unsigned int SUS_EVENT_NUMB = 2;
 
-
 std::unordered_map<int, std::string> access_path;
 std::unordered_map<std::string, std::pair<int, ch::time_point<ch::system_clock>>> access_file;
 std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
 int eventsCount = 0;
 
-
+// Terminate executation of suspicious file and remove the executable
 void terminate_executable(int pid) {
     char exePath[PATH_MAX];
     std::string linkToExe;
@@ -42,7 +41,16 @@ void terminate_executable(int pid) {
     std::remove(exePath);
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
-
+/*
+ * The file is considered to be suspicious if the following conditions
+ * are met:
+ *  - The file was read by the same process less than 0.5 seconds ago.
+ *  - The same process has written to this subtree of directories
+ *  less than 0.5 seconds ago.
+ *  - If such suspicious behaviour occurred SUS_EVENT_NUMB times for the same
+ *  process, then the process is considered to be encoder virus.
+ *  In such case process will be killed and the executable deleted.
+ */
 void handle_event(int fan_fd) {
     fanotify_event_metadata *metadata;
     fanotify_response response;
@@ -69,7 +77,7 @@ void handle_event(int fan_fd) {
         while (FAN_EVENT_OK(metadata, len)) {
             if (metadata->fd >= 0) {
 
-                /* Retrieve and print pathname of the accessed file. */
+                // Retrieve pathname of the accessed file
                 snprintf(procPath, sizeof(procPath),
                          "/proc/self/fd/%d", metadata->fd);
 
@@ -82,6 +90,7 @@ void handle_event(int fan_fd) {
                 path[path_len] = '\0';
                 path_fs = path;
 
+                // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
                     printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
@@ -104,6 +113,7 @@ void handle_event(int fan_fd) {
                     access_file[path_fs.string()] = pair;
                 }
 
+                // Send response if some process intends to write to the file
                 if (metadata->mask & FAN_CLOSE_WRITE) {
                     auto currentTime = ch::system_clock::now();
 
@@ -129,10 +139,9 @@ void handle_event(int fan_fd) {
                     }
                 }
 
-
-
                 std::cout << "File " << path << " PID " << metadata->pid << "\n";
-                /* Close the file descriptor of the event. */
+
+                // Close the file descriptor of the event
                 close(metadata->fd);
 
             }
@@ -147,6 +156,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
+    // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDONLY | O_LARGEFILE);
 
@@ -155,6 +165,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
+    // Add dir to watch queue
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
@@ -164,6 +175,8 @@ int main(int argc, char **argv) {
 
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
+
+    // Wait until event occurs
     while (true) {
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
