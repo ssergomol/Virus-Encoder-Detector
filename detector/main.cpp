@@ -50,7 +50,7 @@ void handle_event(int fan_fd) {
     ssize_t len;
     char path[PATH_MAX];
     ssize_t path_len;
-    char procfd_path[PATH_MAX];
+    char procPath[PATH_MAX];
     fs::path path_fs;
 
     while (true) {
@@ -70,12 +70,12 @@ void handle_event(int fan_fd) {
             if (metadata->fd >= 0) {
 
                 /* Retrieve and print pathname of the accessed file. */
-                snprintf(procfd_path, sizeof(procfd_path),
+                snprintf(procPath, sizeof(procPath),
                          "/proc/self/fd/%d", metadata->fd);
 
-                path_len = readlink(procfd_path, path, sizeof(path) - 1);
+                path_len = readlink(procPath, path, sizeof(path) - 1);
                 if (path_len == -1) {
-                    std::cerr << "Failed to read link " << procfd_path << "\n";
+                    std::cerr << "Failed to read link " << procPath << "\n";
                     exit(EXIT_FAILURE);
                 }
 
@@ -131,10 +131,7 @@ void handle_event(int fan_fd) {
 
 
 
-                printf("File %s", path);
-                printf(" PID %d", metadata->pid);
-                printf("\n");
-
+                std::cout << "File " << path << " PID " << metadata->pid << "\n";
                 /* Close the file descriptor of the event. */
                 close(metadata->fd);
 
@@ -153,7 +150,6 @@ int main(int argc, char **argv) {
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDONLY | O_LARGEFILE);
 
-    if (fan_fd == -1) {
         std::cerr << "Failed to init fanotify watch queue\n";
         exit(EXIT_FAILURE);
     }
@@ -165,7 +161,6 @@ int main(int argc, char **argv) {
         std::cerr << "Failed to mark file or directory\n";
         exit(EXIT_FAILURE);
     }
-    std::cout << "Check 2\n";
 
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
