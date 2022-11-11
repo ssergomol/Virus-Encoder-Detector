@@ -116,8 +116,7 @@ void handle_event(int fan_fd) {
                                 eventsCount++;
                                 if (eventsCount == SUS_EVENT_NUMB) {
                                     std::cout << "Suspicious process: " << metadata->pid << "\n";
-                                    exit(EXIT_SUCCESS);
-                                    // terminate process
+                                    terminate_executable(metadata->pid);
                                 }
                             }
 
