@@ -90,7 +90,7 @@ void handle_event(int fan_fd) {
                     }
                     auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
                                                                                       ch::system_clock::now());
-                    access_file.insert(path_fs.string(), pair);
+                    access_file[path_fs.string()] = pair;
                 }
 
                 if (metadata->mask & FAN_CLOSE_WRITE) {
