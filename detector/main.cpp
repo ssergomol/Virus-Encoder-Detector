@@ -13,6 +13,7 @@
 #include <ctime>
 #include <utility>
 #include <filesystem>
+#include <cstring>
 
 
 namespace fs = std::filesystem;
