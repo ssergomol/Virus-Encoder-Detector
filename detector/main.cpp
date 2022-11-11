@@ -151,9 +151,13 @@ int main(int argc, char **argv) {
     }
 
     pollfd fds{fan_fd, POLLIN};
+    int counter = 0;
     while (true) {
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
+        } else {
+            counter++;
+            std::cout << counter << " ";
         }
     }
 
