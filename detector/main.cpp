@@ -155,14 +155,14 @@ int main(int argc, char **argv) {
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
     while (true) {
-        std::cout << "Before if in while\n";
+        int pollNum = poll(&fds, 1, -1);
+        if (pollNum == -1) {
+            std::cerr << std::strerror(errno);
+            exit(EXIT_FAILURE);
+        }
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
-        } else {
-            counter++;
-            std::cout << counter << " ";
         }
-        std::cout << "After if in while\n";
     }
 
     return 0;
