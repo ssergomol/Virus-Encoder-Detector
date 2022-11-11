@@ -21,8 +21,8 @@ namespace ch = std::chrono;
 const unsigned int SUS_EVENT_NUMB = 2;
 
 
-std::unordered_map<unsigned, std::string> access_path;
-std::unordered_map<std::string, std::pair<unsigned, ch::time_point<ch::system_clock>>> access_file;
+std::unordered_map<int, std::string> access_path;
+std::unordered_map<std::string, std::pair<int, ch::time_point<ch::system_clock>>> access_file;
 std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
 int eventsCount = 0;
 
