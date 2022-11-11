@@ -150,10 +150,10 @@ int main(int argc, char **argv) {
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDONLY | O_LARGEFILE);
 
+    if (fan_fd == -1) {
         std::cerr << "Failed to init fanotify watch queue\n";
         exit(EXIT_FAILURE);
     }
-    std::cout << "Check 1\n";
 
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
