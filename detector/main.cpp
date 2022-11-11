@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <cstring>
 #include <string>
+#include <csignal>
 
 
 namespace fs = std::filesystem;
@@ -37,6 +38,7 @@ void terminate_executable(int pid) {
     if (len != -1) {
         exePath[len] = '\0';
     }
+    kill(pid, SIGKILL);
     std::cout << exePath << "\n";
 }
 
@@ -49,7 +51,6 @@ void handle_event(int fan_fd) {
     ssize_t path_len;
     char procfd_path[PATH_MAX];
     fs::path path_fs;
-
 
     while (true) {
         len = read(fan_fd, buf, sizeof(buf));
