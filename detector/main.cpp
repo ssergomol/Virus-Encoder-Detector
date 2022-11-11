@@ -7,9 +7,23 @@
 #include <cstdlib>
 #include <sys/poll.h>
 #include <unistd.h>
+#include <unordered_map>
 #include <sys/fanotify.h>
+#include <chrono>
+#include <ctime>
+#include <utility>
+#include <filesystem>
+
 
 namespace fs = std::filesystem;
+namespace ch = std::chrono;
+const unsigned int SUS_EVENT_NUMB = 2;
+
+
+std::unordered_map<unsigned, std::string> access_path;
+std::unordered_map<std::string, std::pair<unsigned, ch::time_point<ch::system_clock>>> access_file;
+std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
+int eventsCount = 0;
 
 void handle_event(int fan_fd) {
     fanotify_event_metadata *metadata;
@@ -19,6 +33,7 @@ void handle_event(int fan_fd) {
     char path[PATH_MAX];
     ssize_t path_len;
     char procfd_path[PATH_MAX];
+
 
     while (true) {
         len = read(fan_fd, buf, sizeof(buf));
@@ -36,17 +51,6 @@ void handle_event(int fan_fd) {
         while (FAN_EVENT_OK(metadata, len)) {
             if (metadata->fd >= 0) {
 
-                if (metadata->mask & FAN_ACCESS_PERM) {
-                    printf("FAN_ACCESS_PERM: ");
-                    response.fd = metadata->fd;
-                    response.response = FAN_ALLOW;
-                    write(fan_fd, &response, sizeof(response));
-                }
-
-                if (metadata->mask & FAN_CLOSE_WRITE) {
-                    printf("FAN_CLOSE_WRITE: ");
-                }
-
                 /* Retrieve and print pathname of the accessed file. */
                 snprintf(procfd_path, sizeof(procfd_path),
                          "/proc/self/fd/%d", metadata->fd);
@@ -59,6 +63,33 @@ void handle_event(int fan_fd) {
                 }
 
                 path[path_len] = '\0';
+                fs::path path_fs = path;
+
+
+                if (metadata->mask & FAN_ACCESS_PERM) {
+                    printf("FAN_ACCESS_PERM: ");
+                    response.fd = metadata->fd;
+                    response.response = FAN_ALLOW;
+                    write(fan_fd, &response, sizeof(response));
+
+                    if (!access_path.contains(metadata->pid)) {
+                        std::string oldPath = access_path[metadata->pid];
+                        auto res = std::mismatch(oldPath.begin(), oldPath.end(),
+                                                 path_fs.string().begin());
+
+                        if (res.first != oldPath.end()) {
+                            access_path.insert(metadata->pid, path_fs.parent_path());
+                        }
+                    }
+                    auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
+                                                                                      ch::system_clock::now());
+                    access_file.insert(path_fs.string(), pair);
+                }
+
+                if (metadata->mask & FAN_CLOSE_WRITE) {
+                    printf("FAN_CLOSE_WRITE: ");
+                }
+
                 printf("File %s", path);
                 printf(" PID %d", metadata->pid);
                 printf("\n");
