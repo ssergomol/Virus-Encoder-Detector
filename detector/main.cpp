@@ -62,19 +62,21 @@ void handle_event(int fan_fd) {
                 snprintf(procfd_path, sizeof(procfd_path),
                          "/proc/self/fd/%d", metadata->fd);
 
+                path_len = readlink(procfd_path, path, sizeof(path) - 1);
+                if (path_len == -1) {
+                    std::cerr << "Failed to read link " << procfd_path << "\n";
+                    exit(EXIT_FAILURE);
+                }
 
-                if (metadata->mask & FAN_ACCESS_PERM) {
+                path[path_len] = '\0';
+                path_fs = path;
+
+
+                if (metadata->mask & FAN_CLOSE_NOWRITE) {
                     printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
-                    path_len = readlink(procfd_path, path, sizeof(path) - 1);
-                    if (path_len == -1) {
-                        std::cerr << "Failed to read link " << procfd_path << "\n";
-                        exit(EXIT_FAILURE);
-                    }
 
-                    path[path_len] = '\0';
-                    path_fs = path;
 
                     write(fan_fd, &response, sizeof(response));
 
@@ -148,7 +150,7 @@ int main(int argc, char **argv) {
     std::cout << "Check 1\n";
 
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
-                      FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
+                      FAN_CLOSE_NOWRITE | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
         std::cerr << "Failed to mark file or directory\n";
         exit(EXIT_FAILURE);
