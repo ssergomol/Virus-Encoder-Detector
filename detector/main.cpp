@@ -25,6 +25,11 @@ std::unordered_map<std::string, std::pair<unsigned, ch::time_point<ch::system_cl
 std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
 int eventsCount = 0;
 
+
+void terminate_executable(pid_t pid) {
+
+}
+
 void handle_event(int fan_fd) {
     fanotify_event_metadata *metadata;
     fanotify_response response;
@@ -33,6 +38,7 @@ void handle_event(int fan_fd) {
     char path[PATH_MAX];
     ssize_t path_len;
     char procfd_path[PATH_MAX];
+
 
 
     while (true) {
@@ -78,7 +84,7 @@ void handle_event(int fan_fd) {
                                                  path_fs.string().begin());
 
                         if (res.first != oldPath.end()) {
-                            access_path.insert(metadata->pid, path_fs.parent_path());
+                            access_path.insert(metadata->pid, path_fs.parent_path().string());
                         }
                     }
                     auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
