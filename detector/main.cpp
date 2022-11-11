@@ -112,7 +112,7 @@ void handle_event(int fan_fd) {
                             }
 
                     printf("FAN_CLOSE_WRITE: ");
-                            susWrite[access_path[metadata->pid]] = ch::system_clock::now());
+                            susWrite[access_path[metadata->pid]] = ch::system_clock::now();
                         }
 
                     }
