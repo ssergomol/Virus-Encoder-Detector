@@ -78,43 +78,43 @@ void handle_event(int fan_fd) {
                     response.response = FAN_ALLOW;
                     write(fan_fd, &response, sizeof(response));
 
-                    if (!access_path.contains(metadata->pid)) {
-                        std::string oldPath = access_path[metadata->pid];
-                        auto res = std::mismatch(oldPath.begin(), oldPath.end(),
-                                                 path_fs.string().begin());
-
-                        if (res.first != oldPath.end()) {
-                            access_path.insert(metadata->pid, path_fs.parent_path().string());
-                        }
-                    }
-                    auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
-                                                                                      ch::system_clock::now());
-                    access_file.insert(path_fs.string(), pair);
+//                    if (!access_path.contains(metadata->pid)) {
+//                        std::string oldPath = access_path[metadata->pid];
+//                        auto res = std::mismatch(oldPath.begin(), oldPath.end(),
+//                                                 path_fs.string().begin());
+//
+//                        if (res.first != oldPath.end()) {
+//                            access_path.insert(metadata->pid, path_fs.parent_path().string());
+//                        }
+//                    }
+//                    auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
+//                                                                                      ch::system_clock::now());
+//                    access_file.insert(path_fs.string(), pair);
                 }
 
                 if (metadata->mask & FAN_CLOSE_WRITE) {
-                    auto currentTime = ch::system_clock::now();
-
-                    if (access_file[path_fs.string()].first == metadata->pid) {
-                        auto timeDiff = ch::duration<double, std::milli>(
-                                 currentTime - access_file[path_fs.string()].second).count();
-
-                        if (timeDiff < 500) {
-                            if (susWrite.contains(access_path[metadata->pid])
-                            && ch::duration<double, std::milli>(
-                                    currentTime - susWrite[access_path[metadata->pid]]).count() < 500) {
-                                eventsCount++;
-                                if (eventsCount == SUS_EVENT_NUMB) {
-                                    std::cout << "Suspicious process: " << metadata->pid << "\n";
-                                    // terminate process
-                                }
-                            }
+//                    auto currentTime = ch::system_clock::now();
+//
+//                    if (access_file[path_fs.string()].first == metadata->pid) {
+//                        auto timeDiff = ch::duration<double, std::milli>(
+//                                 currentTime - access_file[path_fs.string()].second).count();
+//
+//                        if (timeDiff < 500) {
+//                            if (susWrite.contains(access_path[metadata->pid])
+//                            && ch::duration<double, std::milli>(
+//                                    currentTime - susWrite[access_path[metadata->pid]]).count() < 500) {
+//                                eventsCount++;
+//                                if (eventsCount == SUS_EVENT_NUMB) {
+//                                    std::cout << "Suspicious process: " << metadata->pid << "\n";
+//                                    // terminate process
+//                                }
+//                            }
 
                             printf("FAN_CLOSE_WRITE: ");
-                            susWrite.insert(access_path[metadata->pid], ch::system_clock::now());
-                        }
-
-                    }
+//                            susWrite.insert(access_path[metadata->pid], ch::system_clock::now());
+//                        }
+//
+//                    }
                 }
 
                 printf("File %s", path);
