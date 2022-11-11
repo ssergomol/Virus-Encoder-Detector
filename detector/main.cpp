@@ -67,14 +67,7 @@ void handle_event(int fan_fd) {
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
                     write(fan_fd, &response, sizeof(response));
-                    path_len = readlink(procfd_path, path, sizeof(path) - 1);
-                    if (path_len == -1) {
-                        std::cerr << "Failed to read link " << procfd_path << "\n";
-                        exit(EXIT_FAILURE);
-                    }
 
-                    path[path_len] = '\0';
-                    fs::path path_fs = path;
 
 //                    if (!access_path.contains(metadata->pid)) {
 //                        std::string oldPath = access_path[metadata->pid];
@@ -91,14 +84,6 @@ void handle_event(int fan_fd) {
                 }
 
                 if (metadata->mask & FAN_CLOSE_WRITE) {
-                    path_len = readlink(procfd_path, path, sizeof(path) - 1);
-                    if (path_len == -1) {
-                        std::cerr << "Failed to read link " << procfd_path << "\n";
-                        exit(EXIT_FAILURE);
-                    }
-
-                    path[path_len] = '\0';
-                    fs::path path_fs = path;
 //                    auto currentTime = ch::system_clock::now();
 //
 //                    if (access_file[path_fs.string()].first == metadata->pid) {
@@ -122,6 +107,15 @@ void handle_event(int fan_fd) {
 //
 //                    }
                 }
+
+                path_len = readlink(procfd_path, path, sizeof(path) - 1);
+                if (path_len == -1) {
+                    std::cerr << "Failed to read link " << procfd_path << "\n";
+                    exit(EXIT_FAILURE);
+                }
+
+                path[path_len] = '\0';
+                fs::path path_fs = path;
 
                 printf("File %s", path);
                 printf(" PID %d", metadata->pid);
