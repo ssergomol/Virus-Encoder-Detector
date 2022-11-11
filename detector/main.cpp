@@ -85,7 +85,7 @@ void handle_event(int fan_fd) {
                                                  path_fs.string().begin());
 
                         if (res.first != oldPath.end()) {
-                            access_path.insert(metadata->pid, path_fs.parent_path().string());
+                            access_path[metadata->pid] = path_fs.parent_path().string();
                         }
                     }
                     auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
