@@ -39,7 +39,8 @@ void terminate_executable(int pid) {
         exePath[len] = '\0';
     }
     kill(pid, SIGKILL);
-    std::cout << exePath << "\n";
+    std::remove(exePath);
+    std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
 
 void handle_event(int fan_fd) {
