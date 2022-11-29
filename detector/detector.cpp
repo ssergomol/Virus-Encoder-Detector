@@ -22,8 +22,16 @@ namespace fs = std::filesystem;
 namespace ch = std::chrono;
 const unsigned int SUS_EVENT_NUMB = 2;
 
+// access_path map for each process tracks the parent subdirectory where
+// this process changes some files. It updates only in case if changing file is not
+// in folder which is a child for chosen parent directory
 std::unordered_map<int, std::string> access_path;
+
+// access_file map tracks the modified time and the process which made this modification
+// for each modifying file
 std::unordered_map<std::string, std::pair<int, ch::time_point<ch::system_clock>>> access_file;
+
+// susWrite keeps track of last suspicious behavior of certain files
 std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
 int eventsCount = 0;
 
@@ -38,7 +46,7 @@ void terminate_executable(int pid) {
         exePath[len] = '\0';
     }
     kill(pid, SIGKILL);
-    std::remove(exePath);
+//    std::remove(exePath);
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
 
