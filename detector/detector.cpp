@@ -19,29 +19,13 @@
 #include <sqlite3.h>
 #include "../database/db.hpp"
 #include "../database/file_repo.hpp"
-
+#include "detector.hpp"
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
-const unsigned int SUS_EVENT_NUMB = 2;
-Storage store = Storage();
-
-// access_path map for each process tracks the parent subdirectory where
-// this process changes some files. It updates only in case if changing file is not
-// in folder which is a child for chosen parent directory
-std::unordered_map<int, std::string> access_path;
-
-// access_file map tracks the modified time and the process which made this modification
-// for each modifying file
-std::unordered_map <std::string, std::pair<int, ch::time_point < ch::system_clock>>>
-access_file;
-
-// susWrite keeps track of last suspicious behavior of certain files
-std::unordered_map <std::string, ch::time_point<ch::system_clock>> susWrite;
-int eventsCount = 0;
 
 // Terminate executation of suspicious file and remove the executable
-void terminate_executable(int pid) {
+void Detector::terminate_executable(int pid) {
     char exePath[PATH_MAX];
     std::string linkToExe;
 
@@ -55,7 +39,7 @@ void terminate_executable(int pid) {
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
 
-void addToDatabase(int pid) {
+void Detector::addToDatabase(int pid) {
     char exePath[PATH_MAX];
     std::string linkToExe;
 
@@ -70,17 +54,7 @@ void addToDatabase(int pid) {
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
 
-/*
- * The file is considered to be suspicious if the following conditions
- * are met:
- *  - The file was read by the same process less than 0.5 seconds ago.
- *  - The same process has written to this subtree of directories
- *  less than 0.5 seconds ago.
- *  - If such suspicious behaviour occurred SUS_EVENT_NUMB times for the same
- *  process, then the process is considered to be encoder virus.
- *  In such case process will be killed and the executable deleted.
- */
-void handle_event(int fan_fd) {
+void Detector::handle_event(int fan_fd) {
     fanotify_event_metadata *metadata;
     fanotify_response response;
     fanotify_event_metadata buf[200];
@@ -180,8 +154,7 @@ void handle_event(int fan_fd) {
     }
 }
 
-
-int startDecoder(int argc, char **argv) {
+int Detector::startDecoder(int argc, char **argv) {
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " [path name]\n";
         exit(EXIT_FAILURE);
@@ -211,7 +184,6 @@ int startDecoder(int argc, char **argv) {
         store.close();
         exit(EXIT_FAILURE);
     }
-
 
 
     pollfd fds{fan_fd, POLLIN};
