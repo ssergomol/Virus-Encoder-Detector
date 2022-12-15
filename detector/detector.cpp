@@ -24,7 +24,7 @@
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
 const unsigned int SUS_EVENT_NUMB = 2;
-Storage DB = Storage();
+Storage store = Storage();
 
 // access_path map for each process tracks the parent subdirectory where
 // this process changes some files. It updates only in case if changing file is not
@@ -189,9 +189,9 @@ int startDecoder(int argc, char **argv) {
 
     // Configure the database
     Storage database = Storage();
-    DB = database;
-    DB.connect();
-    DB.initDB("../database/init_db.sql");
+    store = database;
+    store.connect();
+    store.initDB("../database/init_db.sql");
 
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
@@ -199,7 +199,7 @@ int startDecoder(int argc, char **argv) {
 
     if (fan_fd == -1) {
         std::cerr << "Failed to init fanotify watch queue\n";
-        DB.close();
+        store.close();
         exit(EXIT_FAILURE);
     }
 
@@ -208,7 +208,7 @@ int startDecoder(int argc, char **argv) {
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
         std::cerr << "Failed to mark file or directory\n";
-        DB.close();
+        store.close();
         exit(EXIT_FAILURE);
     }
 
@@ -222,7 +222,7 @@ int startDecoder(int argc, char **argv) {
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
             std::cerr << std::strerror(errno);
-            DB.close();
+            store.close();
             exit(EXIT_FAILURE);
         }
         if (fds.revents & POLLIN) {
@@ -230,6 +230,6 @@ int startDecoder(int argc, char **argv) {
         }
     }
 
-    DB.close();
+    store.close();
     return 0;
 }
