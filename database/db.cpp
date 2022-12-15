@@ -21,8 +21,8 @@ sqlite3 *Storage::getDB() const {
 
 void Storage::connect() {
     sqlite3 *db;
-    int rc = sqlite3_open("/etc/Virus-Encoder-Detector/modified_files.db", &db);
-
+//    int rc = sqlite3_open("/etc/Virus-Encoder-Detector/modified_files.db", &db);
+    int rc = sqlite3_open("test.db", &db);
     if (rc) {
         fprintf(stderr, "Can't open database connection: %s\n", sqlite3_errmsg(db));
         return;
