@@ -16,6 +16,7 @@
 #include <cstring>
 #include <string>
 #include <csignal>
+#include <sqlite3.h>
 #include "../database/db.hpp"
 #include "../database/file_repo.hpp"
 
