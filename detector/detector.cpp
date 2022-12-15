@@ -50,7 +50,7 @@ void Detector::addToDatabase(int pid) {
     }
 
     File file((std::string(exePath)));
-    DB.File()->insertFile(file);
+    DB->File()->insertFile(file);
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
 
@@ -159,12 +159,6 @@ int Detector::startDecoder(int argc, char **argv) {
         std::cerr << "Usage: " << argv[0] << " [path name]\n";
         exit(EXIT_FAILURE);
     }
-
-    // Configure the database
-    Storage database = Storage();
-    store = database;
-    store.connect();
-    store.initDB("../database/init_db.sql");
 
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
