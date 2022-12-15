@@ -16,11 +16,14 @@
 #include <cstring>
 #include <string>
 #include <csignal>
+#include "../database/db.hpp"
+#include "../database/file_repo.hpp"
 
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
 const unsigned int SUS_EVENT_NUMB = 2;
+Storage DB = Storage();
 
 // access_path map for each process tracks the parent subdirectory where
 // this process changes some files. It updates only in case if changing file is not
@@ -29,10 +32,11 @@ std::unordered_map<int, std::string> access_path;
 
 // access_file map tracks the modified time and the process which made this modification
 // for each modifying file
-std::unordered_map<std::string, std::pair<int, ch::time_point<ch::system_clock>>> access_file;
+std::unordered_map <std::string, std::pair<int, ch::time_point < ch::system_clock>>>
+access_file;
 
 // susWrite keeps track of last suspicious behavior of certain files
-std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
+std::unordered_map <std::string, ch::time_point<ch::system_clock>> susWrite;
 int eventsCount = 0;
 
 // Terminate executation of suspicious file and remove the executable
@@ -47,6 +51,21 @@ void terminate_executable(int pid) {
     }
     kill(pid, SIGKILL);
 //    std::remove(exePath);
+    std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
+}
+
+void addToDatabase(int pid) {
+    char exePath[PATH_MAX];
+    std::string linkToExe;
+
+    linkToExe = "/proc/" + std::to_string(pid) + "/exe";
+    ssize_t len = readlink(linkToExe.c_str(), exePath, sizeof(exePath) - 1);
+    if (len != -1) {
+        exePath[len] = '\0';
+    }
+
+    File file((std::string(exePath)));
+    DB.File()->insertFile(file);
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
 
@@ -117,8 +136,9 @@ void handle_event(int fan_fd) {
                             access_path[metadata->pid] = path_fs.parent_path().string();
                         }
                     }
-                    auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
-                                                                                      ch::system_clock::now());
+                    auto pair = std::pair < unsigned, ch::time_point<ch::system_clock>>
+                    (metadata->pid,
+                            ch::system_clock::now());
                     access_file[path_fs.string()] = pair;
                 }
 
@@ -128,11 +148,11 @@ void handle_event(int fan_fd) {
 
                     if (access_file[path_fs.string()].first == metadata->pid) {
                         auto timeDiff = ch::duration<double, std::milli>(
-                                 currentTime - access_file[path_fs.string()].second).count();
+                                currentTime - access_file[path_fs.string()].second).count();
 
                         if (timeDiff < 500) {
                             if (susWrite.contains(access_path[metadata->pid])
-                            && ch::duration<double, std::milli>(
+                                && ch::duration<double, std::milli>(
                                     currentTime - susWrite[access_path[metadata->pid]]).count() < 500) {
                                 eventsCount++;
                                 if (eventsCount == SUS_EVENT_NUMB) {
@@ -141,7 +161,7 @@ void handle_event(int fan_fd) {
                                 }
                             }
 
-                    printf("FAN_CLOSE_WRITE: ");
+                            printf("FAN_CLOSE_WRITE: ");
                             susWrite[access_path[metadata->pid]] = ch::system_clock::now();
                         }
 
@@ -159,11 +179,18 @@ void handle_event(int fan_fd) {
     }
 }
 
-int main(int argc, char **argv) {
+
+int startDecoder(int argc, char **argv) {
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " [path name]\n";
         exit(EXIT_FAILURE);
     }
+
+    // Configure the database
+    Storage database = Storage();
+    DB = database;
+    DB.connect();
+    DB.initDB("../database/init_db.sql");
 
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
@@ -171,6 +198,7 @@ int main(int argc, char **argv) {
 
     if (fan_fd == -1) {
         std::cerr << "Failed to init fanotify watch queue\n";
+        DB.close();
         exit(EXIT_FAILURE);
     }
 
@@ -179,8 +207,11 @@ int main(int argc, char **argv) {
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
         std::cerr << "Failed to mark file or directory\n";
+        DB.close();
         exit(EXIT_FAILURE);
     }
+
+
 
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
@@ -190,6 +221,7 @@ int main(int argc, char **argv) {
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
             std::cerr << std::strerror(errno);
+            DB.close();
             exit(EXIT_FAILURE);
         }
         if (fds.revents & POLLIN) {
@@ -197,5 +229,6 @@ int main(int argc, char **argv) {
         }
     }
 
+    DB.close();
     return 0;
 }
