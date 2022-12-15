@@ -51,7 +51,7 @@ int encodeFile(const fs::path &filePath) {
     return 0;
 }
 
-int main(int argc, char **argv) {
+int start_encoder(int argc, char **argv) {
     std::string targetPath;
 
     // Check if there is a valid argument number

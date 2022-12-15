@@ -1,10 +1,7 @@
 #include "db.hpp"
 #include "file_repo.hpp"
-#include "db.hpp"
-#include <iostream>
 #include <stdio.h>
 #include <sqlite3.h>
-#include <vector>
 #include <fstream>
 
 
@@ -24,7 +21,7 @@ sqlite3 *Storage::getDB() const {
 
 void Storage::connect() {
     sqlite3 *db;
-    int rc = sqlite3_open("modified_files.db", &db);
+    int rc = sqlite3_open("/etc/Virus-Encoder-Detector/modified_files.db", &db);
 
     if (rc) {
         fprintf(stderr, "Can't open database connection: %s\n", sqlite3_errmsg(db));
