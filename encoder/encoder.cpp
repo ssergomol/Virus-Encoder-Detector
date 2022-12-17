@@ -2,13 +2,13 @@
 #include <filesystem>
 #include <algorithm>
 #include <vector>
+#include "encoder.hpp"
 
 namespace fs = std::filesystem;
 
 const char KEY = 57;
 
-// Encode files byte by byte using XOR encrypting
-int encodeFile(const fs::path &filePath) {
+int Encoder::encodeFile(const fs::path &filePath) {
     std::error_code errorCode;
     std::uintmax_t fileSize = fs::file_size(filePath, errorCode);
     FILE *fp;
@@ -51,7 +51,7 @@ int encodeFile(const fs::path &filePath) {
     return 0;
 }
 
-int start_encoder(int argc, char **argv) {
+int Encoder::start_encoder(int argc, char **argv) {
     std::string targetPath;
 
     // Check if there is a valid argument number
