@@ -1,5 +1,7 @@
 #include "db.hpp"
 #include "file_repo.hpp"
+#include "white_list_repo.hpp"
+#include "black_list_repo.hpp"
 #include <stdio.h>
 #include <sqlite3.h>
 #include <fstream>
@@ -73,6 +75,36 @@ FileRepo* Storage::File() {
     return fileRepo;
 }
 
+WhiteListRepo* Storage::WhiteList() {
+    if (whiteListRepo != nullptr) {
+        return whiteListRepo;
+    }
+
+    this->whiteListRepo = new WhiteListRepo(this);
+    return this->whiteListRepo;
+}
+
+WhiteListRepo* Storage::BlackList() {
+    if (blackListRepo != nullptr) {
+        return blackListRepo;
+    }
+
+    this->blackListRepo = new BlackListRepo(this);
+    return this->blackListRepo;
+}
+
+
 Storage::~Storage() {
-    delete(fileRepo);
+    if (fileRepo != nullptr) {
+        delete(fileRepo);
+    }
+
+    if (blackListRepo != nullptr) {
+        delete(blackListRepo);
+    }
+
+    if (whiteListRepo != nullptr) {
+        delete(whiteListRepo);
+    }
+
 };

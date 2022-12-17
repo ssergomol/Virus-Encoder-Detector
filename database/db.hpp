@@ -4,10 +4,15 @@
 #include <iostream>
 
 class FileRepo;
+class WhiteListRepo;
+class BlackListRepo;
 
 class Storage {
     sqlite3 *db{};
     FileRepo *fileRepo{};
+    WhiteListRepo *whiteListRepo{};
+    BlackListRepo *blackListRepo{};
+
 
 public:
     sqlite3* getDB() const;
@@ -15,6 +20,8 @@ public:
     void close();
     void initDB(const std::string& initFileName);
     FileRepo* File();
+    BlackListRepo* BlackList();
+    WhiteListRepo* WhiteList();
     static int callback(void *, int argc, char **argv, char **azColName);
     ~Storage();
 };
