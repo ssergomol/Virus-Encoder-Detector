@@ -20,6 +20,8 @@
 #include "../database/db.hpp"
 #include "../database/file_repo.hpp"
 #include "detector.hpp"
+#include "../database/black_list_repo.hpp"
+#include "../database/white_list_repo.hpp"
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
@@ -35,7 +37,11 @@ void Detector::terminate_executable(int pid) {
         exePath[len] = '\0';
     }
     kill(pid, SIGKILL);
-//    std::remove(exePath);
+
+    // Put executable into the black list
+    if (!this->store.BlackList()->contains(std::string(exePath))) {
+        this->store.BlackList()->addExe(std::string(exePath));
+    }
     std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
 }
 
@@ -92,6 +98,11 @@ void Detector::handle_event(int fan_fd) {
 
                 path[path_len] = '\0';
                 path_fs = path;
+
+                // If accessed file in the white list, then skip
+                if (this->store.WhiteList()->contains(std::string(path))) {
+                    continue;
+                }
 
                 // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
