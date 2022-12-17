@@ -6,8 +6,8 @@
 
 void FileRepo::insertFile(File file) {
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(store->getDB(), "INSERT INTO files(path, content, size)"
-                                                " VALUES(?, ?, ?)", -1, &stmt, nullptr);
+    int rc = sqlite3_prepare_v2(store->getDB(), "INSERT INTO files(path, content, size, pid)"
+                                                " VALUES(?, ?, ?, ?)", -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
         std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
@@ -29,6 +29,11 @@ void FileRepo::insertFile(File file) {
     }
 
     rc = sqlite3_bind_int(stmt, 3, file.getSize());
+    if (rc != SQLITE_OK) {
+        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
+    }
+
+    rc = sqlite3_bind_int(stmt, 4, file.getPID());
     if (rc != SQLITE_OK) {
         std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
     }
