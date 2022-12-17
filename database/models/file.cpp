@@ -25,3 +25,7 @@ std::vector<char> File::getContent() const {
 unsigned int File::getSize() const {
     return size;
 }
+
+unsigned int File::getPID() const {
+    return pid;
+}
