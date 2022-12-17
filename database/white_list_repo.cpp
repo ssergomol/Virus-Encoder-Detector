@@ -39,6 +39,9 @@ bool WhiteListRepo::contains(const std::string& path) const {
         std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
     }
 
+    rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
     // No rows returned
     if (rc == SQLITE_DONE) {
         return false;

@@ -11,6 +11,13 @@ private:
 public:
     FileRepo(Storage* storage) : store(storage) {}
     void insertFile(File file);
+
+    // Remove files from database which
+    // were modified by process "pid"
+    void removeOutOfList(int pid);
+
+    // Decode files encoded by process "pid"
+    void recoverFiles(int pid);
 };
 
 #endif
