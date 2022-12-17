@@ -1,5 +1,14 @@
-CREATE TABLE files(
+CREATE TABLE modified_files(
     path TEXT PRIMARY KEY,
     content BLOB,
-    size INTEGER
+    size INTEGER,
+    pid INTEGER
+);
+
+CREATE TABLE black_list(
+    path TEXT PRIMARY KEY
+);
+
+CREATE TABLE black_list(
+    path TEXT PRIMARY KEY
 );
