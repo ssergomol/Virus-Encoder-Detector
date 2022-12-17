@@ -1,4 +1,4 @@
-#include "detector/detector.cpp"
+#include "detector/detector.hpp"
 #include "database/db.hpp"
 
 int main(int argc, char** argv) {
