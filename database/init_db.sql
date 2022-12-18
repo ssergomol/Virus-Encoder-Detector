@@ -9,6 +9,6 @@ CREATE TABLE black_list(
     path TEXT PRIMARY KEY
 );
 
-CREATE TABLE black_list(
+CREATE TABLE white_list(
     path TEXT PRIMARY KEY
 );

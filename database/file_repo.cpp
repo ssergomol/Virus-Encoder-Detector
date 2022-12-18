@@ -70,7 +70,7 @@ void FileRepo::removeOutOfList(int pid) {
 
 void FileRepo::recoverFiles(int pid) {
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(store->getDB(), "SELECT path FROM files WHERE pid = ?", -1, &stmt, nullptr);
+    int rc = sqlite3_prepare_v2(store->getDB(), "SELECT path FROM modified_files WHERE pid = ?", -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
         std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
