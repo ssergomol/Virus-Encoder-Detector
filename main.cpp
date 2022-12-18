@@ -4,6 +4,8 @@
 
 #include "database/file_repo.hpp"
 #include "database/models/file.hpp"
+#include "detector/detector.hpp"
+#include "encoder/encoder.hpp"
 
 #include <iostream>
 #include <vector>
