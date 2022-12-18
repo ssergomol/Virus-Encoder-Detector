@@ -87,7 +87,7 @@ void FileRepo::recoverFiles(int pid) {
     rc = sqlite3_step(stmt);
 
     while (rc == SQLITE_ROW) {
-        const char* pathString = sqlite3_column_text(stmt, 0);
+        auto pathString = sqlite3_column_text(stmt, 0);
         const std::filesystem::path path = pathString;
 
         // decode encoded file

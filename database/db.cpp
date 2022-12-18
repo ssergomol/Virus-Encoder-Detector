@@ -84,7 +84,7 @@ WhiteListRepo* Storage::WhiteList() {
     return this->whiteListRepo;
 }
 
-WhiteListRepo* Storage::BlackList() {
+BlackListRepo* Storage::BlackList() {
     if (blackListRepo != nullptr) {
         return blackListRepo;
     }
