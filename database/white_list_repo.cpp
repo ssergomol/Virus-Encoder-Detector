@@ -35,7 +35,7 @@ bool WhiteListRepo::contains(const std::string& path) const {
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
 
-    // No rows returned
+    // IF no rows returned
     if (rc == SQLITE_DONE) {
         return false;
     }

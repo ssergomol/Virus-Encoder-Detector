@@ -8,10 +8,10 @@ class WhiteListRepo;
 class BlackListRepo;
 
 class Storage {
-    sqlite3 *db{};
-    FileRepo *fileRepo{};
-    WhiteListRepo *whiteListRepo{};
-    BlackListRepo *blackListRepo{};
+    sqlite3 *db;
+    FileRepo *fileRepo;
+    WhiteListRepo *whiteListRepo;
+    BlackListRepo *blackListRepo;
 
 
 public:
