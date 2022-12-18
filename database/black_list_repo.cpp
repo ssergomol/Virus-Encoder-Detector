@@ -15,7 +15,7 @@ void BlackListRepo::addExe(const std::string &path) {
         return;
     }
 
-    rc = sqlite3_bind_int(stmt, 1, reinterpret_cast<char *>(&path[0]), path.size(), SQLITE_STATIC);
+    rc = sqlite3_bind_int(stmt, 1, const_cast<char *>(&path[0]), path.size(), SQLITE_STATIC);
     if (rc != SQLITE_OK) {
         std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
     }
@@ -36,7 +36,7 @@ bool BlackListRepo::contains(const std::string& path) const {
         return false;
     }
 
-    rc = sqlite3_bind_int(stmt, 1, reinterpret_cast<char *>(&path[0]), path.size(), SQLITE_STATIC);
+    rc = sqlite3_bind_int(stmt, 1, const_cast<char *>(&path[0]), path.size(), SQLITE_STATIC);
     if (rc != SQLITE_OK) {
         std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
     }
