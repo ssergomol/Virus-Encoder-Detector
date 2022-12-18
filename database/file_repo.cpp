@@ -8,7 +8,7 @@
 
 void FileRepo::insertFile(File file) {
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(store->getDB(), "INSERT INTO files(path, content, size, pid)"
+    int rc = sqlite3_prepare_v2(store->getDB(), "INSERT INTO modified_files(path, content, size, pid)"
                                                 " VALUES(?, ?, ?, ?)", -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
@@ -48,7 +48,7 @@ void FileRepo::insertFile(File file) {
 
 void FileRepo::removeOutOfList(int pid) {
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(store->getDB(), "DELETE FROM files WHERE pid = ?", -1, &stmt, nullptr);
+    int rc = sqlite3_prepare_v2(store->getDB(), "DELETE FROM modified_files WHERE pid = ?", -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
         std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
