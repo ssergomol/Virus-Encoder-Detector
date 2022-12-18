@@ -1,5 +1,6 @@
 #include "black_list_repo.hpp"
 #include "db.hpp"
+#include <loguru.hpp>
 
 #include <iostream>
 #include <sqlite3.h>
@@ -10,15 +11,11 @@ void BlackListRepo::addExe(const std::string &path) {
     int rc = sqlite3_prepare_v2(store->getDB(), "INSERT INTO black_list(path)"
                                                 " VALUES(?)", -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
-        std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
+    CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_bind_text(stmt, 1, const_cast<char *>(&path[0]), path.size(), SQLITE_STATIC);
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-    }
+
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
 
@@ -31,15 +28,10 @@ bool BlackListRepo::contains(const std::string& path) const {
     int rc = sqlite3_prepare_v2(store->getDB(), "SELECT * FROM black_list WHERE path = ?"
             , -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
-        std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return false;
-    }
+    CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_bind_text(stmt, 1, const_cast<char *>(&path[0]), path.size(), SQLITE_STATIC);
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-    }
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);

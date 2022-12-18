@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <sqlite3.h>
 #include <fstream>
+#include <loguru.hpp>
 
 
 int Storage::callback(void *, int argc, char **argv, char **azColName) {
@@ -26,19 +27,23 @@ void Storage::connect() {
     int rc = sqlite3_open("detector.db", &db);
 //    int rc = sqlite3_open("/", &db);
     if (rc) {
-        fprintf(stderr, "Can't open database connection: %s\n", sqlite3_errmsg(db));
+        LOG_F(FATAL, "Can't open database connection: %s", sqlite3_errmsg(db));
         return;
     } else {
-        printf("Database connection opened successfully\n");
+        LOG_F(INFO, "Database connection opened successfully");
         this->db = db;
     }
 }
 
 void Storage::close() {
+    if (db == nullptr) {
+        return;
+    }
+
     if (sqlite3_close(db) == SQLITE_OK) {
-        printf("Database connection closed\n");
+        LOG_F(INFO, "Database connection closed");
     } else {
-        std::cerr << sqlite3_errmsg(db) << std::endl;
+        LOG_F(FATAL, "Couldn't close database connection: %s", sqlite3_errmsg(db));
     }
 }
 
@@ -56,12 +61,7 @@ void Storage::initDB(const std::string &initFileName) {
         int rc = sqlite3_exec(this->db, init.c_str(),
                               this->callback, nullptr, &zErrMsg);
 
-        if (rc != SQLITE_OK) {
-            fprintf(stderr, "SQL error: %s\n", zErrMsg);
-            sqlite3_free(zErrMsg);
-        } else {
-            fprintf(stdout, "Operation done successfully\n");
-        }
+        CHECK_F(rc == SQLITE_OK, "SQL error: %s\n", zErrMsg);
     }
 }
 
@@ -106,4 +106,5 @@ Storage::~Storage() {
         delete(whiteListRepo);
     }
 
+    close();
 };

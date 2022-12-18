@@ -22,7 +22,7 @@
 #include "detector.hpp"
 #include "../database/black_list_repo.hpp"
 #include "../database/white_list_repo.hpp"
-#include <cerrno>
+#include <loguru.hpp>
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
@@ -43,7 +43,9 @@ void Detector::terminate_executable(int pid) {
     if (!this->store.BlackList()->contains(std::string(exePath))) {
         this->store.BlackList()->addExe(std::string(exePath));
     }
-    std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
+
+    LOG_F(INFO, "Binary file %s was detected as suspicious and put into the whitelist", exePath);
+    LOG_F(INFO, "Suspicious process %d is killed", pid);
 }
 
 void Detector::addToDatabase(int pid) {
@@ -58,7 +60,7 @@ void Detector::addToDatabase(int pid) {
 
     File file((std::string(exePath)));
     DB->File()->insertFile(file);
-    std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
+    LOG_F(INFO, "File %s is added to the database as modified", exePath);
 }
 
 void Detector::handle_event(int fan_fd) {
@@ -73,10 +75,7 @@ void Detector::handle_event(int fan_fd) {
 
     while (true) {
         len = read(fan_fd, buf, sizeof(buf));
-        if (len == -1 && errno != EAGAIN) {
-            std::cerr << "Failed to read file\n";
-            exit(EXIT_FAILURE);
-        }
+        CHECK_F(!(len == -1 && errno != EAGAIN), "Failed to read file: %s", strerror(errno));
 
         if (len <= 0) {
             break;
@@ -92,14 +91,12 @@ void Detector::handle_event(int fan_fd) {
                          "/proc/self/fd/%d", metadata->fd);
 
                 path_len = readlink(procPath, path, sizeof(path) - 1);
-                if (path_len == -1) {
-                    std::cerr << "Failed to read link " << procPath << "\n";
-                    exit(EXIT_FAILURE);
-                }
+                CHECK_F(path_len != -1, "Failed to read link %s: %s", procPath, strerror(errno));
 
                 path[path_len] = '\0';
                 path_fs = path;
 
+                LOG_F(INFO, "File %s is accessed by process %d\n", path, metadata->pid);
                 // If accessed file in the white list, then skip
                 if (this->store.WhiteList()->contains(std::string(path))) {
                     continue;
@@ -107,7 +104,6 @@ void Detector::handle_event(int fan_fd) {
 
                 // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
-                    printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
 
@@ -145,19 +141,15 @@ void Detector::handle_event(int fan_fd) {
                                     currentTime - susWrite[access_path[metadata->pid]]).count() < 500) {
                                 eventsCount++;
                                 if (eventsCount == SUS_EVENT_NUMB) {
-                                    std::cout << "Suspicious process: " << metadata->pid << "\n";
                                     terminate_executable(metadata->pid);
                                 }
                             }
 
-                            printf("FAN_CLOSE_WRITE: ");
                             susWrite[access_path[metadata->pid]] = ch::system_clock::now();
                         }
 
                     }
                 }
-
-                std::cout << "File " << path << " PID " << metadata->pid << "\n";
 
                 // Close the file descriptor of the event
                 close(metadata->fd);
@@ -169,19 +161,15 @@ void Detector::handle_event(int fan_fd) {
 }
 
 int Detector::startDecoder(int argc, char **argv) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " [path name]\n";
-        exit(EXIT_FAILURE);
-    }
+    CHECK_F(argc == 2, "Usage: %s [path name]", argv[0]);
 
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDONLY | O_LARGEFILE);
 
     if (fan_fd == -1) {
-        std::cerr << "Failed to init fanotify watch queue\n";
+        LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
         store.close();
-        std:: cout << strerror(errno) << '\n';
         exit(EXIT_FAILURE);
     }
 
@@ -189,7 +177,8 @@ int Detector::startDecoder(int argc, char **argv) {
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
-        std::cerr << "Failed to mark file or directory\n";
+
+        LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
         store.close();
         exit(EXIT_FAILURE);
     }
@@ -202,7 +191,8 @@ int Detector::startDecoder(int argc, char **argv) {
     while (true) {
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
-            std::cerr << std::strerror(errno);
+
+            LOG_F(FATAL, strerror(errno));
             store.close();
             exit(EXIT_FAILURE);
         }

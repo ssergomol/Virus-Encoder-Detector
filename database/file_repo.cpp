@@ -5,40 +5,30 @@
 #include <sqlite3.h>
 #include "db.hpp"
 #include "../encoder/encoder.hpp"
+#include <loguru.hpp>
+
 
 void FileRepo::insertFile(File file) {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(store->getDB(), "INSERT INTO modified_files(path, content, size, pid)"
                                                 " VALUES(?, ?, ?, ?)", -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
-        std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
+    CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_bind_text(stmt, 1, reinterpret_cast<char *>(&file.getFileName()[0]),
                            file.getFileName().size(), SQLITE_STATIC);
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_bind_blob(stmt, 2, static_cast<void *>(file.getContent().data()),
                            file.getContent().size(), SQLITE_STATIC);
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_bind_int(stmt, 3, file.getSize());
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-    }
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_bind_int(stmt, 4, file.getPID());
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-    }
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
+
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
 
@@ -50,17 +40,11 @@ void FileRepo::removeOutOfList(int pid) {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(store->getDB(), "DELETE FROM modified_files WHERE pid = ?", -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
-        std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
+    CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_bind_int(stmt, 1, pid);
 
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
@@ -70,19 +54,13 @@ void FileRepo::removeOutOfList(int pid) {
 
 void FileRepo::recoverFiles(int pid) {
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(store->getDB(), "SELECT path FROM modified_files WHERE pid = ?", -1, &stmt, nullptr);
+    int rc = sqlite3_prepare_v2(store->getDB(), "SELECT path FROM modified_files WHERE pid = ?",
+                                -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
-        std::cerr << "prepare failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
-
+    CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
     rc = sqlite3_bind_int(stmt, 1, pid);
 
-    if (rc != SQLITE_OK) {
-        std::cerr << "bind failed: " << sqlite3_errmsg(store->getDB()) << std::endl;
-        return;
-    }
+    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_step(stmt);
 
@@ -98,5 +76,4 @@ void FileRepo::recoverFiles(int pid) {
     }
 
     sqlite3_finalize(stmt);
-
 }
