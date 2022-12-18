@@ -26,7 +26,7 @@ void Storage::connect() {
     sqlite3 *db;
     int rc = sqlite3_open("detector.db", &db);
 //    int rc = sqlite3_open("/", &db);
-    if (rc != SQLITE3_OK) {
+    if (rc != SQLITE_OK) {
         LOG_F(FATAL, "Can't open database connection: %s", sqlite3_errmsg(db));
         return;
     } else {
