@@ -42,7 +42,7 @@ void FileRepo::insertFile(File file) {
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
 
-    const char *sql = "SELECT * from files;";
+    const char *sql = "SELECT * from modified_files;";
     sqlite3_exec(store->getDB(), sql, store->callback, 0, 0);
 }
 
@@ -64,7 +64,7 @@ void FileRepo::removeOutOfList(int pid) {
 
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
-    const char *sql = "SELECT * from files;";
+    const char *sql = "SELECT * from modified_files;";
     sqlite3_exec(store->getDB(), sql, store->callback, 0, 0);
 }
 
