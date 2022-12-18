@@ -22,6 +22,7 @@
 #include "detector.hpp"
 #include "../database/black_list_repo.hpp"
 #include "../database/white_list_repo.hpp"
+#include <cerrno>
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
@@ -180,6 +181,7 @@ int Detector::startDecoder(int argc, char **argv) {
     if (fan_fd == -1) {
         std::cerr << "Failed to init fanotify watch queue\n";
         store.close();
+        std:: cout << strerror(errno) << '\n';
         exit(EXIT_FAILURE);
     }
 
