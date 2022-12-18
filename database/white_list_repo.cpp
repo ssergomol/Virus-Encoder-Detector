@@ -1,4 +1,5 @@
 #include "white_list_repo.hpp"
+#include "db.hpp"
 #include <iostream>
 #include <sqlite3.h>
 #include <vector>
