@@ -36,10 +36,9 @@ void Storage::connect() {
 
 void Storage::close() {
     if (sqlite3_close(db) == SQLITE_OK) {
-        printf("Database connection closed");
+        printf("Database connection closed\n");
     } else {
         std::cerr << sqlite3_errmsg(db) << std::endl;
-        fprintf(stderr, "Can't close database");
     }
 }
 
