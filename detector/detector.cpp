@@ -101,6 +101,8 @@ void Detector::handle_event(int fan_fd) {
                 if (this->store.WhiteList()->contains(std::string(path))) {
                     continue;
                 }
+                std::cout << path << " not in white list, continue\n";
+
 
                 // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
@@ -170,7 +172,7 @@ int Detector::startDecoder(int argc, char **argv) {
     if (fan_fd == -1) {
         LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
         store.close();
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     // Add dir to watch queue
@@ -180,7 +182,7 @@ int Detector::startDecoder(int argc, char **argv) {
 
         LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
         store.close();
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
 
@@ -194,7 +196,7 @@ int Detector::startDecoder(int argc, char **argv) {
 
             LOG_F(FATAL, strerror(errno));
             store.close();
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
@@ -202,5 +204,5 @@ int Detector::startDecoder(int argc, char **argv) {
     }
 
     store.close();
-    return 0;
+    return EXIT_SUCCESS;
 }
