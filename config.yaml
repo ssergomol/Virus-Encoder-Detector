@@ -1,8 +1,8 @@
 database:
   init_script: "database/init_db.sql"
-  URL: "detector.db"
+  URL: "/etc/Virus-Encoder-Detector/detector.db"
 
 logger:
-  all_logs: "logs/detector_all.log"
-  latest_readable: "logs/detector_latest_readable.log"
+  all_logs: "/etc/Virus-Encoder-Detector/logs/detector_all.log"
+  latest_readable: "/etc/Virus-Encoder-Detector/logs/detector_latest_readable.log"
 

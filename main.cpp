@@ -51,10 +51,10 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    std::vector<char> content{'1', '2', '3'};
-    File file("/home/ok", content, 3, ::getpid());
-    database->File()->insertFile(file);
-    
+//    std::vector<char> content{'1', '2', '3'};
+//    File file("/home/ok", content, 3, ::getpid());
+//    database->File()->insertFile(file);
+
     Detector detector(database);
     detector.startDecoder(argc, argv);
     database->close();
