@@ -1,0 +1,8 @@
+database:
+  init_script: "database/init_db.sql"
+  URL: "detector.db"
+
+logger:
+  all_logs: "logs/detector_all.log"
+  latest_readable: "logs/detector_latest_readable.log"
+
