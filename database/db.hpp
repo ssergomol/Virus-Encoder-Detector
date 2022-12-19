@@ -16,7 +16,7 @@ class Storage {
 
 public:
     sqlite3* getDB() const;
-    void connect();
+    void connect(const std::string& url);
     void close();
     void initDB(const std::string& initFileName);
     FileRepo* File();

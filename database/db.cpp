@@ -22,9 +22,9 @@ sqlite3 *Storage::getDB() const {
     return db;
 }
 
-void Storage::connect() {
+void Storage::connect(const std::string& url) {
     sqlite3 *db;
-    int rc = sqlite3_open("detector.db", &db);
+    int rc = sqlite3_open(url.c_str(), &db);
 //    int rc = sqlite3_open("/", &db);
     if (rc != SQLITE_OK) {
         LOG_F(FATAL, "Can't open database connection: %s", sqlite3_errmsg(db));
