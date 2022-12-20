@@ -62,9 +62,9 @@ void Detector::addToDatabase(int pid) {
 
     std::string exePathString = exePath;
     if (!DB->File()->contains(exePath)) {
-        std::vector<char> content{'1', '2', '3'};
-        File file(exePathString, content, 3, pid);
-        DB->File()->insertFile(file);
+//        std::vector<char> content{'1', '2', '3'};
+//        File file(exePathString, content, 3, pid);
+//        DB->File()->insertFile(file);
         LOG_F(INFO, "File %s is added to the database as modified", exePath);
     } else {
         LOG_F(INFO, "File %s is already in database", exePath);
