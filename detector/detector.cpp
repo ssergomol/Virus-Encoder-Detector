@@ -22,6 +22,7 @@
 #include "detector.hpp"
 #include "../database/black_list_repo.hpp"
 #include "../database/white_list_repo.hpp"
+#include "../database/models/file.hpp"
 #include <loguru.hpp>
 
 namespace fs = std::filesystem;
@@ -58,8 +59,9 @@ void Detector::addToDatabase(int pid) {
         exePath[len] = '\0';
     }
 
-//    File file((std::string(exePath)));
-//    DB->File()->insertFile(file);
+    std::string exePathString = exePath;
+    File file(exePathString);
+    DB->File()->insertFile(file);
     LOG_F(INFO, "File %s is added to the database as modified", exePath);
 }
 
