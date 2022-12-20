@@ -75,7 +75,7 @@ void Detector::addToDatabase(int pid) {
     std::string filePath = exePath;
     File file(filePath, pid);
     LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
-    this->DB->File()->contains(filePath);
+//    this->DB->File()->contains(filePath);
 //    if (!this->DB->File()->contains(filePath)) {
 //        this->DB->File()->insertFile(file);
 //    }
@@ -226,6 +226,7 @@ int Detector::startDecoder(int argc, char **argv) {
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
     while (true) {
+        this->DB->File()->contains("/hello/ok/");
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
 
