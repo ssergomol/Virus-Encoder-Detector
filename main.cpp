@@ -4,6 +4,8 @@
 
 #include "database/file_repo.hpp"
 #include "database/models/file.hpp"
+#include "database/black_list_repo.hpp"
+#include "database/white_list_repo.hpp"
 //#include "detector/detector.hpp"
 #include "encoder/encoder.hpp"
 
@@ -29,7 +31,7 @@ int main(int argc, char** argv) {
         loguru::add_file(last_readable_path.c_str(),
                 loguru::Truncate, loguru::Verbosity_INFO);
     } else {
-        LOG_F(FATAL, "The logger isn't configured correct in the config.yaml");
+        LOG_F(FATAL, "The logger isn't configured correctly in the config.yaml");
         return EXIT_FAILURE;
     }
 
@@ -51,12 +53,27 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-//    std::vector<char> content{'1', '2', '3'};
-//    File file("/home/ok", content, 3, ::getpid());
-//    database->File()->insertFile(file);
+    std::vector<char> content{'1', '2', '3'};
+    File file("/home/ok", content, 3, ::getpid());
+    database->File()->insertFile(file);
 
-    Detector detector(database);
-    detector.startDecoder(argc, argv);
+    database->WhiteList()->addExe("/usr/test");
+//    database->BlackList()->addExe("/usr/test/for/black/list");
+
+    if (database->WhiteList()->contains("/usr/test")) {
+        std::cout << "/usr/test is in the white list\n";
+    } else {
+        std::cout << "/usr/test is not in the white list\n";
+    }
+
+    if (database->BlackList()->contains("/usr/test/for/black/list")) {
+        std::cout << "/usr/test/for/black/list is in the black list\n";
+    } else {
+        std::cout << "/usr/test/for/black/list is not in the black list\n";
+    }
+
+//    Detector detector(database);
+//    detector.startDecoder(argc, argv);
     database->close();
     free(database);
 }
