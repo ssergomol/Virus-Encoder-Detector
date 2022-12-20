@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
     Detector detector(database);
     File file("/hello/ok", 12);
     LOG_F(INFO, "The file is about to be added");
-    detector->DB->File()->insertFile(file);
+    detector.DB->File()->insertFile(file);
     LOG_F(INFO, "Filed added");
     detector.startDecoder(argc, argv);
 //    database->close();
