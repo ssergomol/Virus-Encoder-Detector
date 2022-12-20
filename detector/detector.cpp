@@ -225,10 +225,10 @@ int Detector::startDecoder(int argc, char **argv) {
 
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
-    File file("/hello/ok", 12);
-    LOG_F(INFO, "The file is about to be added");
-    this->DB->File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
+//    File file("/hello/ok", 12);
+//    LOG_F(INFO, "The file is about to be added");
+//    this->DB->File()->insertFile(file);
+//    LOG_F(INFO, "Filed added");
 
     while (true) {
         int pollNum = poll(&fds, 1, -1);
