@@ -81,8 +81,8 @@ void FileRepo::recoverFiles(int pid) {
 
 bool FileRepo::contains(const std::string& path) const {
     sqlite3_stmt *stmt;
-//    int rc = sqlite3_prepare_v2(store->getDB(), "SELECT * FROM modified_files WHERE path = ?"
-//            , -1, &stmt, nullptr);
+    int rc = sqlite3_prepare_v2(store->getDB(), "SELECT * FROM modified_files WHERE path = ?"
+            , -1, &stmt, nullptr);
 //
 //    CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 //
