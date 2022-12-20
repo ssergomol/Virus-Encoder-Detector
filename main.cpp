@@ -82,8 +82,8 @@ int main(int argc, char** argv) {
 //    File file(path);
 //    database->File()->insertFile(file);
 //
-//    Detector detector(database);
-//    detector.startDecoder(argc, argv);
+    Detector detector(database);
+    detector.startDecoder(argc, argv);
     database->close();
     free(database);
 }
