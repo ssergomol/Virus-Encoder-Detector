@@ -62,7 +62,7 @@ void Detector::addToDatabase(int pid) {
 
     std::string exePathString = exePath;
     LOG_F(INFO, "File %s is added to the database as modified", exePath);
-    DB->File();
+    File file(exePathString);
 //    if (!DB->File()->contains(exePath)) {
 //        File file(exePathString);
 //        DB->File()->insertFile(file);
