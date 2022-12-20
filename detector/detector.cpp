@@ -241,19 +241,37 @@ int Detector::startDecoder(int argc, char **argv) {
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
 
-    while (true) {
-        int pollNum = poll(&fds, 1, -1);
-        if (pollNum == -1) {
+    File file("/hello/ok", 12);
 
-            LOG_F(FATAL, strerror(errno));
-            delete(DB);
-            return EXIT_FAILURE;
-        }
-
-        if (fds.revents & POLLIN) {
-            handle_event(fds.fd);
-        }
+    if (this->DB->File()->contains(file.getFileName())) {
+        LOG_F(INFO, "File /hello/ok is not in the database");
+    } else {
+        LOG_F(INFO, "File /hello/ok is in the database");
     }
+
+    LOG_F(INFO, "The file is about to be added");
+    this->DB->File()->insertFile(file);
+    LOG_F(INFO, "Filed added");
+
+    if (this->DB->File()->contains(file.getFileName())) {
+        LOG_F(INFO, "File /hello/ok is not in the database");
+    } else {
+        LOG_F(INFO, "File /hello/ok is in the database");
+    }
+
+//    while (true) {
+//        int pollNum = poll(&fds, 1, -1);
+//        if (pollNum == -1) {
+//
+//            LOG_F(FATAL, strerror(errno));
+//            delete(DB);
+//            return EXIT_FAILURE;
+//        }
+//
+//        if (fds.revents & POLLIN) {
+//            handle_event(fds.fd);
+//        }
+//    }
 
     delete(DB);
     return EXIT_SUCCESS;
