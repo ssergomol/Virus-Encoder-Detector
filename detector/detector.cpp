@@ -229,7 +229,14 @@ int Detector::startDecoder(int argc, char **argv) {
     int i = 0;
     while (true) {
 //        if (this->DB->File()->contains("/hello/ok/");
-        if (i == 100000) {
+        if (i == 10) {
+            LOG_F(INFO, "It's 10");
+        }
+
+        if (i = 1000) {
+            LOG_F(INFO, "It's 1000");
+        }
+        if (i == 10000) {
             LOG_F(INFO, "Thed file is about to be added");
             this->DB->File()->insertFile(file);
             LOG_F(INFO, "Filed added");
