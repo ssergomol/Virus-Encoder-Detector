@@ -6,8 +6,6 @@
 
 namespace fs = std::filesystem;
 
-const char KEY = 57;
-
 int Encoder::encodeFile(const fs::path &filePath) {
     std::error_code errorCode;
     std::uintmax_t fileSize = fs::file_size(filePath, errorCode);

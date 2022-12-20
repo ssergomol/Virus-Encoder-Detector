@@ -72,6 +72,10 @@ int main(int argc, char** argv) {
 //        std::cout << "/usr/test/for/black/list is not in the black list\n";
 //    }
 
+//    std::string path = "../test/file.txt";
+//    File file(path);
+//    database->File()->insertFile(file);
+//
     Detector detector(database);
     detector.startDecoder(argc, argv);
     database->close();

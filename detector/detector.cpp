@@ -116,7 +116,7 @@ void Detector::handle_event(int fan_fd) {
 
                 // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
-                    printf("FAN_ACCESS_PERM: ");
+//                    printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
 
@@ -157,7 +157,7 @@ void Detector::handle_event(int fan_fd) {
                                     terminate_executable(metadata->pid);
                                 }
                             }
-                            printf("FAN_CLOSE_WRITE: ");
+//                            printf("FAN_CLOSE_WRITE: ");
                             susWrite[access_path[metadata->pid]] = ch::system_clock::now();
                         }
 
