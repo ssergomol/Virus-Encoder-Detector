@@ -73,6 +73,7 @@ void Detector::addToDatabase(int pid) {
     std::string filePath = exePath;
     File file(filePath, pid);
     LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
+    this->DB->File()->contains(filePath);
 //    if (!this->DB->File()->contains(filePath)) {
 //        this->DB->File()->insertFile(file);
 //    }
@@ -140,6 +141,7 @@ void Detector::handle_event(int fan_fd) {
                     response.response = FAN_ALLOW;
 
                     write(fan_fd, &response, sizeof(response));
+                    this->addToDatabase(metadata->pid);
 
 
                     if (!access_path.contains(metadata->pid)) {
@@ -161,7 +163,6 @@ void Detector::handle_event(int fan_fd) {
                 // and add modified file to database
                 if (metadata->mask & FAN_CLOSE_WRITE) {
                     auto currentTime = ch::system_clock::now();
-                    this->addToDatabase(metadata->pid);
 
                     if (access_file[path_fs.string()].first == metadata->pid) {
                         auto timeDiff = ch::duration<double, std::milli>(
