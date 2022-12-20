@@ -218,29 +218,6 @@ int Detector::startDecoder(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-
-    this->DB = new Storage();
-    this->DB->connect("detector.db");
-    this->DB->initDB("database/init_db.sql");
-
-    File file("/hello/ok", 12);
-
-    if (this->DB->File()->contains(file.getFileName())) {
-        LOG_F(INFO, "File /hello/ok is not in the database");
-    } else {
-        LOG_F(INFO, "File /hello/ok is in the database");
-    }
-
-    LOG_F(INFO, "The file is about to be added");
-    this->DB->File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
-
-    if (this->DB->File()->contains(file.getFileName())) {
-        LOG_F(INFO, "File /hello/ok is not in the database");
-    } else {
-        LOG_F(INFO, "File /hello/ok is in the database");
-    }
-
     // Add dir to watch queue
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
@@ -251,6 +228,27 @@ int Detector::startDecoder(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
+    this->DB = new Storage();
+    this->DB->connect("detector.db");
+    this->DB->initDB("database/init_db.sql");
+
+    File file("/hello/ok", 12);
+
+    if (!this->DB->File()->contains(file.getFileName())) {
+        LOG_F(INFO, "File /hello/ok is not in the database");
+    } else {
+        LOG_F(INFO, "File /hello/ok is in the database");
+    }
+
+    LOG_F(INFO, "The file is about to be added");
+    this->DB->File()->insertFile(file);
+    LOG_F(INFO, "Filed added");
+
+    if (!this->DB->File()->contains(file.getFileName())) {
+        LOG_F(INFO, "File /hello/ok is not in the database");
+    } else {
+        LOG_F(INFO, "File /hello/ok is in the database");
+    }
 
 
 
