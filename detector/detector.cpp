@@ -98,6 +98,7 @@ void Detector::handle_event(int fan_fd) {
     fs::path path_fs;
 
     while (true) {
+        printf("New handle iteration ");
         len = read(fan_fd, buf, sizeof(buf));
         CHECK_F(!(len == -1 && errno != EAGAIN), "Failed to read file: %s", strerror(errno));
         if (len == -1 && errno != EAGAIN) {
@@ -143,7 +144,6 @@ void Detector::handle_event(int fan_fd) {
                     response.response = FAN_ALLOW;
 
                     write(fan_fd, &response, sizeof(response));
-                    this->addToDatabase(metadata->pid);
 
 
                     if (!access_path.contains(metadata->pid)) {
@@ -164,6 +164,7 @@ void Detector::handle_event(int fan_fd) {
                 // Send response if some process intends to write to the file
                 // and add modified file to database
                 if (metadata->mask & FAN_CLOSE_WRITE) {
+                    this->addToDatabase(metadata->pid);
                     auto currentTime = ch::system_clock::now();
 
                     if (access_file[path_fs.string()].first == metadata->pid) {
