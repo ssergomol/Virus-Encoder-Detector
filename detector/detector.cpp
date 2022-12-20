@@ -199,11 +199,14 @@ void Detector::handle_event(int fan_fd) {
 int Detector::startDecoder(int argc, char **argv) {
     CHECK_F(argc == 2, "Usage: %s [path name]", argv[0]);
 
-
-
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDONLY | O_LARGEFILE);
+
+    this->DB = new Storage();
+    this->DB->connect("detector.db");
+    this->DB->initDB("database/init_db.sql")
+
 
     File file("/hello/ok", 12);
     LOG_F(INFO, "The file is about to be added");
@@ -236,10 +239,6 @@ int Detector::startDecoder(int argc, char **argv) {
 
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
-//    File file("/hello/ok", 12);
-//    LOG_F(INFO, "The file is about to be added");
-//    this->DB->File()->insertFile(file);
-//    LOG_F(INFO, "Filed added");
 
 //    while (true) {
 //        int pollNum = poll(&fds, 1, -1);

@@ -42,20 +42,20 @@ int main(int argc, char** argv) {
     // Only show most relevant things on stderr:
     loguru::g_stderr_verbosity = 1;
 
-    Storage *database = new Storage();
-    if (basenode["database"]["URL"]) {
-        database->connect(basenode["database"]["URL"].as<std::string>());
-    } else {
-        LOG_F(FATAL, "The database URL for database wasn't provided in config");
-        return EXIT_FAILURE;
-    }
-
-    if (basenode["database"]["init_script"]) {
-        database->initDB(basenode["database"]["init_script"].as<std::string>());
-    } else {
-        LOG_F(FATAL, "The init script for database wasn't provided in config");
-        return EXIT_FAILURE;
-    }
+//    Storage *database = new Storage();
+//    if (basenode["database"]["URL"]) {
+//        database->connect(basenode["database"]["URL"].as<std::string>());
+//    } else {
+//        LOG_F(FATAL, "The database URL for database wasn't provided in config");
+//        return EXIT_FAILURE;
+//    }
+//
+//    if (basenode["database"]["init_script"]) {
+//        database->initDB(basenode["database"]["init_script"].as<std::string>());
+//    } else {
+//        LOG_F(FATAL, "The init script for database wasn't provided in config");
+//        return EXIT_FAILURE;
+//    }
 
 //    std::vector<char> content{'1', '2', '3'};
 //    std::string filePath = "/home/ok";
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 //    database->File()->insertFile(file);
 
 //
-    Detector detector(database);
+    Detector detector;
     detector.startDecoder(argc, argv);
 //    database->close();
 //    free(database);

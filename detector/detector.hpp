@@ -50,7 +50,7 @@ class Detector {
 
 public:
     Storage *DB;
-    Detector(Storage *database) : DB(database) {}
+//    Detector(Storage *database) : DB(database) {}
 
     // Terminate executation of suspicious file and remove the executable
     void terminate_executable(int pid);
