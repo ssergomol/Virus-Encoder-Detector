@@ -40,10 +40,10 @@ void Detector::terminate_executable(int pid) {
     }
     kill(pid, SIGKILL);
 
-    // Put executable into the black list
-//    if (!this->DB->BlackList()->contains(std::string(exePath))) {
-//        this->DB->BlackList()->addExe(std::string(exePath));
-//    }
+//     Put executable into the black list
+    if (!this->DB->BlackList()->contains(std::string(exePath))) {
+        this->DB->BlackList()->addExe(std::string(exePath));
+    }
 
     LOG_F(INFO, "Binary file %s was detected as suspicious and put into the whitelist", exePath);
     LOG_F(INFO, "Suspicious process %d is killed", pid);
