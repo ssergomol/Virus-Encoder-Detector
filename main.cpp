@@ -6,7 +6,7 @@
 #include "database/models/file.hpp"
 #include "database/black_list_repo.hpp"
 #include "database/white_list_repo.hpp"
-//#include "detector/detector.hpp"
+#include "detector/detector.hpp"
 #include "encoder/encoder.hpp"
 
 #include <iostream>
@@ -79,12 +79,12 @@ int main(int argc, char** argv) {
 //    }
 
 //    std::string path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";
-    const char* path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";;
-    File file(path,  ::getpid());
-    database->File()->insertFile(file);
+//    const char* path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";;
+//    File file(path,  ::getpid());
+//    database->File()->insertFile(file);
 //
-//    Detector detector(database);
-//    detector.startDecoder(argc, argv);
+    Detector detector(database);
+    detector.startDecoder(argc, argv);
     database->close();
     free(database);
 }
