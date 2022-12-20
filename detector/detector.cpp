@@ -230,7 +230,9 @@ int Detector::startDecoder(int argc, char **argv) {
     while (true) {
 //        if (this->DB->File()->contains("/hello/ok/");
         if (i == 100000) {
+            LOG_F(INFO, "Thed file is about to be added");
             this->DB->File()->insertFile(file);
+            LOG_F(INFO, "Filed added");
         }
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
