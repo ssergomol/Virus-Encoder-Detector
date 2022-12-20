@@ -40,8 +40,8 @@ void Detector::terminate_executable(int pid) {
     kill(pid, SIGKILL);
 
     // Put executable into the black list
-//    if (!this->DB.BlackList()->contains(std::string(exePath))) {
-//        this->DB.BlackList()->addExe(std::string(exePath));
+//    if (!this->DB->BlackList()->contains(std::string(exePath))) {
+//        this->DB->BlackList()->addExe(std::string(exePath));
 //    }
 
     LOG_F(INFO, "Binary file %s was detected as suspicious and put into the whitelist", exePath);
@@ -106,7 +106,7 @@ void Detector::handle_event(int fan_fd) {
 
                 LOG_F(INFO, "File %s is accessed by process %d\n", path, metadata->pid);
                 // If accessed file in the white list, then skip
-//                if (this->DB.WhiteList()->contains(std::string(path))) {
+//                if (this->DB->WhiteList()->contains(std::string(path))) {
 //                    continue;
 //                }
 //                std::cout << path << " not in white list, continue\n";
@@ -180,7 +180,7 @@ int Detector::startDecoder(int argc, char **argv) {
 
     if (fan_fd == -1) {
         LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
-        DB.close();
+        DB->close();
         return EXIT_FAILURE;
     }
 
@@ -190,7 +190,7 @@ int Detector::startDecoder(int argc, char **argv) {
                       argv[1]) == -1) {
 
         LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
-        DB.close();
+        DB->close();
         return EXIT_FAILURE;
     }
 
@@ -204,7 +204,7 @@ int Detector::startDecoder(int argc, char **argv) {
         if (pollNum == -1) {
 
             LOG_F(FATAL, strerror(errno));
-            DB.close();
+            DB->close();
             return EXIT_FAILURE;
         }
         if (fds.revents & POLLIN) {
@@ -212,6 +212,6 @@ int Detector::startDecoder(int argc, char **argv) {
         }
     }
 
-    DB.close();
+    DB->close();
     return EXIT_SUCCESS;
 }
