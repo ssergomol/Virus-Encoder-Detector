@@ -73,7 +73,7 @@ void Detector::addToDatabase(int pid) {
 //    std::vector<char> content{'1', '2', '3'};
 //    std::string filePath = exePath;
     File file(filePath, pid);
-//    DB->File()->insertFile(file);
+    DB->File()->contains(file);
     std::cout << filePath << std::endl;
     if (true) {
         LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());

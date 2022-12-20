@@ -86,7 +86,7 @@ bool FileRepo::contains(const std::string& path) const {
 
     CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
-    rc = sqlite3_bind_text(stmt, 1, const_cast<char *>(&path[0]), path.size(), SQLITE_STATIC);
+    rc = sqlite3_bind_text(stmt, 1, path.c_str(), path.size(), SQLITE_TRANSIENT);
     CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_step(stmt);
