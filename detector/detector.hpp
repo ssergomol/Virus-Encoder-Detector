@@ -28,7 +28,7 @@ namespace fs = std::filesystem;
 namespace ch = std::chrono;
 
 class Detector {
-    Storage *DB;
+
 
     const unsigned int SUS_EVENT_NUMB = 2;
     // access_path map for each process tracks the parent subdirectory where
@@ -49,6 +49,7 @@ class Detector {
     std::mutex mutex;
 
 public:
+    Storage *DB;
     Detector(Storage *database) : DB(database) {}
 
     // Terminate executation of suspicious file and remove the executable
