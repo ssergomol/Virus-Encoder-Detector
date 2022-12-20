@@ -201,6 +201,7 @@ int Detector::startDecoder(int argc, char **argv) {
     int counter = 0;
 
     // Wait until event occurs
+    LOG_F(INFO, "Fanotify set up and ready for supervising");
     while (true) {
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
