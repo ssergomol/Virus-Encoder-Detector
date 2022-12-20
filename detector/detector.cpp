@@ -254,7 +254,7 @@ int Detector::startDecoder(int argc, char **argv) {
 //        }
 //    }
 
-    free(DB);
+    delete(DB);
     DB->close();
     return EXIT_SUCCESS;
 }
