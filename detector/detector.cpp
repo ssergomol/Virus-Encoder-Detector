@@ -71,7 +71,7 @@ void Detector::addToDatabase(int pid) {
 //    }
 
 //    std::vector<char> content{'1', '2', '3'};
-    std::string filePath = exePath;
+//    std::string filePath = exePath;
     File file(filePath, pid);
     DB->File()->insertFile(file);
     std::cout << filePath << std::endl;
