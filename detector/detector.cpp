@@ -218,30 +218,6 @@ int Detector::startDecoder(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    // Add dir to watch queue
-    if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
-                      FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
-                      argv[1]) == -1) {
-
-        LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
-        delete(DB);
-        return EXIT_FAILURE;
-    }
-
-
-
-
-    pollfd fds{fan_fd, POLLIN};
-    int counter = 0;
-
-
-
-    // Wait until event occurs
-    LOG_F(INFO, "Fanotify set up and ready for supervising");
-
-    sqlite3_shutdown();
-    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
-    sqlite3_initialize();
 
     this->DB = new Storage();
     this->DB->connect("detector.db");
@@ -264,6 +240,33 @@ int Detector::startDecoder(int argc, char **argv) {
     } else {
         LOG_F(INFO, "File /hello/ok is in the database");
     }
+
+    // Add dir to watch queue
+    if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
+                      FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
+                      argv[1]) == -1) {
+
+        LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
+        delete(DB);
+        return EXIT_FAILURE;
+    }
+
+
+
+
+    pollfd fds{fan_fd, POLLIN};
+    int counter = 0;
+
+
+
+    // Wait until event occurs
+    LOG_F(INFO, "Fanotify set up and ready for supervising");
+
+
+//    sqlite3_shutdown();
+//    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+//    sqlite3_initialize();
+
 
 //    while (true) {
 //        int pollNum = poll(&fds, 1, -1);
