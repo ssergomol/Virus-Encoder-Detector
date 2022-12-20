@@ -199,10 +199,7 @@ void Detector::handle_event(int fan_fd) {
 int Detector::startDecoder(int argc, char **argv) {
     CHECK_F(argc == 2, "Usage: %s [path name]", argv[0]);
 
-    File file("/hello/ok", 12);
-    LOG_F(INFO, "The file is about to be added");
-    this->DB->File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
+
 
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
@@ -230,6 +227,11 @@ int Detector::startDecoder(int argc, char **argv) {
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
 
+    File file("/hello/ok", 12);
+    LOG_F(INFO, "The file is about to be added");
+    this->DB->File()->insertFile(file);
+    LOG_F(INFO, "Filed added");
+
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
 //    File file("/hello/ok", 12);
@@ -237,19 +239,19 @@ int Detector::startDecoder(int argc, char **argv) {
 //    this->DB->File()->insertFile(file);
 //    LOG_F(INFO, "Filed added");
 
-    while (true) {
-        int pollNum = poll(&fds, 1, -1);
-        if (pollNum == -1) {
-
-            LOG_F(FATAL, strerror(errno));
-            DB->close();
-            return EXIT_FAILURE;
-        }
-
-        if (fds.revents & POLLIN) {
-            handle_event(fds.fd);
-        }
-    }
+//    while (true) {
+//        int pollNum = poll(&fds, 1, -1);
+//        if (pollNum == -1) {
+//
+//            LOG_F(FATAL, strerror(errno));
+//            DB->close();
+//            return EXIT_FAILURE;
+//        }
+//
+//        if (fds.revents & POLLIN) {
+//            handle_event(fds.fd);
+//        }
+//    }
 
     DB->close();
     return EXIT_SUCCESS;
