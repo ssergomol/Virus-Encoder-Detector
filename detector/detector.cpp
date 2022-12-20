@@ -239,6 +239,10 @@ int Detector::startDecoder(int argc, char **argv) {
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
 
+    sqlite3_shutdown();
+    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    sqlite3_initialize();
+
     this->DB = new Storage();
     this->DB->connect("detector.db");
     this->DB->initDB("database/init_db.sql");
