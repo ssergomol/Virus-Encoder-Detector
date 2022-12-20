@@ -237,7 +237,6 @@ int Detector::startDecoder(int argc, char **argv) {
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     }
 
     DB->close();
