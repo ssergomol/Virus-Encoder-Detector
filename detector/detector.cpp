@@ -34,9 +34,16 @@ void Detector::terminate_executable(int pid) {
 //    const char* path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";;
     File file(path,  ::getpid());
 //    database->File()->insertFile(file);
+    if (this->DB->File()->contains(path)) {
+        LOG_F(INFO, "FILE CONTAINS IN MODIFIED_FILES");
+    } else {
+        LOG_F(INFO, "FILE DOESN'T CONTAIN IN MODIFIED_FILES");
+    }
     this->DB->File()->insertFile(file);
     if (this->DB->File()->contains(path)) {
         LOG_F(INFO, "FILE CONTAINS IN MODIFIED_FILES");
+    } else {
+        LOG_F(INFO, "FILE DOESN'T CONTAIN IN MODIFIED_FILES");
     }
 //    char exePath[PATH_MAX];
 //    std::string linkToExe;
