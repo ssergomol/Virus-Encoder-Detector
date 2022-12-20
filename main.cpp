@@ -53,27 +53,27 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    std::vector<char> content{'1', '2', '3'};
-    File file("/home/ok", content, 3, ::getpid());
-    database->File()->insertFile(file);
+//    std::vector<char> content{'1', '2', '3'};
+//    File file("/home/ok", content, 3, ::getpid());
+//    database->File()->insertFile(file);
 
-    database->WhiteList()->addExe("/usr/test");
+//    database->WhiteList()->addExe("/usr/test");
 //    database->BlackList()->addExe("/usr/test/for/black/list");
 
-    if (database->WhiteList()->contains("/usr/test")) {
-        std::cout << "/usr/test is in the white list\n";
-    } else {
-        std::cout << "/usr/test is not in the white list\n";
-    }
+//    if (database->WhiteList()->contains("/usr/test")) {
+//        std::cout << "/usr/test is in the white list\n";
+//    } else {
+//        std::cout << "/usr/test is not in the white list\n";
+//    }
+//
+//    if (database->BlackList()->contains("/usr/test/for/black/list")) {
+//        std::cout << "/usr/test/for/black/list is in the black list\n";
+//    } else {
+//        std::cout << "/usr/test/for/black/list is not in the black list\n";
+//    }
 
-    if (database->BlackList()->contains("/usr/test/for/black/list")) {
-        std::cout << "/usr/test/for/black/list is in the black list\n";
-    } else {
-        std::cout << "/usr/test/for/black/list is not in the black list\n";
-    }
-
-//    Detector detector(database);
-//    detector.startDecoder(argc, argv);
+    Detector detector(database);
+    detector.startDecoder(argc, argv);
     database->close();
     free(database);
 }
