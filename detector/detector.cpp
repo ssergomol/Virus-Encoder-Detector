@@ -205,6 +205,11 @@ int Detector::startDecoder(int argc, char **argv) {
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDONLY | O_LARGEFILE);
 
+    File file("/hello/ok", 12);
+    LOG_F(INFO, "The file is about to be added");
+    this->DB->File()->insertFile(file);
+    LOG_F(INFO, "Filed added");
+
     if (fan_fd == -1) {
         LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
         DB->close();
@@ -227,10 +232,7 @@ int Detector::startDecoder(int argc, char **argv) {
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
 
-    File file("/hello/ok", 12);
-    LOG_F(INFO, "The file is about to be added");
-    this->DB->File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
+
 
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
