@@ -16,7 +16,7 @@ public:
             : fileName(name), content(cont),
             size(length), pid(processPID) {}
 
-    File(std::string path) : ;
+    File(std::string path, int pid);
 
     std::string getFileName() const;
 
