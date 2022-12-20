@@ -25,6 +25,8 @@
 #include "../database/models/file.hpp"
 #include <loguru.hpp>
 #include <mutex>
+#include <chrono>
+#include <thread>
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
@@ -230,9 +232,11 @@ int Detector::startDecoder(int argc, char **argv) {
             DB->close();
             return EXIT_FAILURE;
         }
+
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     }
 
     DB->close();
