@@ -72,15 +72,16 @@ void Detector::addToDatabase(int pid) {
 
     std::string filePath = exePath;
     File file(filePath, pid);
-    if (!this->DB->File()->contains(filePath)) {
+    LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
+//    if (!this->DB->File()->contains(filePath)) {
 //        this->DB->File()->insertFile(file);
-    }
+//    }
     std::cout << filePath << std::endl;
-    if (true) {
-        LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
-    } else {
-        LOG_F(INFO, "File %s is already in database", filePath.c_str());
-    }
+//    if (true) {
+//        LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
+//    } else {
+//        LOG_F(INFO, "File %s is already in database", filePath.c_str());
+//    }
 }
 
 void Detector::handle_event(int fan_fd) {
