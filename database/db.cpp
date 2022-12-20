@@ -45,7 +45,6 @@ void Storage::close() {
     } else {
         LOG_F(FATAL, "Couldn't close database connection: %s", sqlite3_errmsg(db));
     }
-    free(db);
 }
 
 void Storage::initDB(const std::string &initFileName) {
