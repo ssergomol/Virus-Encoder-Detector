@@ -6,7 +6,7 @@
 #include "database/models/file.hpp"
 #include "database/black_list_repo.hpp"
 #include "database/white_list_repo.hpp"
-//#include "detector/detector.hpp"
+#include "detector/detector.hpp"
 #include "encoder/encoder.hpp"
 
 #include <iostream>
