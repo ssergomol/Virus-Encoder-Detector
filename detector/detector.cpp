@@ -74,8 +74,9 @@ void Detector::addToDatabase(int pid) {
 
     std::string filePath = exePath;
     File file(filePath, pid);
+
+    this->DB->File()->contains(filePath);
     LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
-//    this->DB->File()->contains(filePath);
 //    if (!this->DB->File()->contains(filePath)) {
 //        this->DB->File()->insertFile(file);
 //    }
@@ -208,14 +209,14 @@ int Detector::startDecoder(int argc, char **argv) {
     this->DB->connect("detector.db");
     this->DB->initDB("database/init_db.sql");
 
-    File file("/hello/ok", 12);
-    LOG_F(INFO, "The file is about to be added");
-    this->DB->File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
+//    File file("/hello/ok", 12);
+//    LOG_F(INFO, "The file is about to be added");
+//    this->DB->File()->insertFile(file);
+//    LOG_F(INFO, "Filed added");
 
     if (fan_fd == -1) {
         LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
-        DB->close();
+        delete(DB);
         return EXIT_FAILURE;
     }
 
@@ -225,7 +226,7 @@ int Detector::startDecoder(int argc, char **argv) {
                       argv[1]) == -1) {
 
         LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
-        DB->close();
+        delete(DB);
         return EXIT_FAILURE;
     }
 
@@ -240,19 +241,19 @@ int Detector::startDecoder(int argc, char **argv) {
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
 
-//    while (true) {
-//        int pollNum = poll(&fds, 1, -1);
-//        if (pollNum == -1) {
-//
-//            LOG_F(FATAL, strerror(errno));
-//            DB->close();
-//            return EXIT_FAILURE;
-//        }
-//
-//        if (fds.revents & POLLIN) {
-//            handle_event(fds.fd);
-//        }
-//    }
+    while (true) {
+        int pollNum = poll(&fds, 1, -1);
+        if (pollNum == -1) {
+
+            LOG_F(FATAL, strerror(errno));
+            delete(DB);
+            return EXIT_FAILURE;
+        }
+
+        if (fds.revents & POLLIN) {
+            handle_event(fds.fd);
+        }
+    }
 
     delete(DB);
     return EXIT_SUCCESS;
