@@ -21,13 +21,13 @@
 #include <sqlite3.h>
 #include "../database/db.hpp"
 #include "../database/file_repo.hpp"
+#include <mutex>
 
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
 
 class Detector {
-public:
     Storage *DB;
 
     const unsigned int SUS_EVENT_NUMB = 2;
@@ -46,7 +46,9 @@ public:
 
     int eventsCount = 0;
 
+    std::mutex mutex;
 
+public:
     Detector(Storage *database) : DB(database) {}
 
     // Terminate executation of suspicious file and remove the executable

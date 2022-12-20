@@ -24,6 +24,7 @@
 #include "../database/white_list_repo.hpp"
 #include "../database/models/file.hpp"
 #include <loguru.hpp>
+#include <mutex>
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
@@ -73,7 +74,9 @@ void Detector::addToDatabase(int pid) {
 //    std::vector<char> content{'1', '2', '3'};
 //    std::string filePath = exePath;
     File file(filePath, pid);
+    mutex.lock();
     this->DB->File()->contains(filePath);
+    mutex.unlock();
     std::cout << filePath << std::endl;
     if (true) {
         LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
