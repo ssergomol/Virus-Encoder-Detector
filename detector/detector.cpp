@@ -40,9 +40,9 @@ void Detector::terminate_executable(int pid) {
     kill(pid, SIGKILL);
 
     // Put executable into the black list
-    if (!this->store.BlackList()->contains(std::string(exePath))) {
-        this->store.BlackList()->addExe(std::string(exePath));
-    }
+//    if (!this->DB.BlackList()->contains(std::string(exePath))) {
+//        this->DB.BlackList()->addExe(std::string(exePath));
+//    }
 
     LOG_F(INFO, "Binary file %s was detected as suspicious and put into the whitelist", exePath);
     LOG_F(INFO, "Suspicious process %d is killed", pid);
@@ -76,6 +76,10 @@ void Detector::handle_event(int fan_fd) {
     while (true) {
         len = read(fan_fd, buf, sizeof(buf));
         CHECK_F(!(len == -1 && errno != EAGAIN), "Failed to read file: %s", strerror(errno));
+        if (len == -1 && errno != EAGAIN) {
+            std::cerr << "Failed to read file\n";
+            exit(EXIT_FAILURE);
+        }
 
         if (len <= 0) {
             break;
@@ -92,20 +96,25 @@ void Detector::handle_event(int fan_fd) {
 
                 path_len = readlink(procPath, path, sizeof(path) - 1);
                 CHECK_F(path_len != -1, "Failed to read link %s: %s", procPath, strerror(errno));
+                if (path_len == -1) {
+                    std::cerr << "Failed to read link " << procPath << "\n";
+                    exit(EXIT_FAILURE);
+                }
 
                 path[path_len] = '\0';
                 path_fs = path;
 
                 LOG_F(INFO, "File %s is accessed by process %d\n", path, metadata->pid);
                 // If accessed file in the white list, then skip
-                if (this->store.WhiteList()->contains(std::string(path))) {
-                    continue;
-                }
-                std::cout << path << " not in white list, continue\n";
+//                if (this->DB.WhiteList()->contains(std::string(path))) {
+//                    continue;
+//                }
+//                std::cout << path << " not in white list, continue\n";
 
 
                 // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
+                    printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
 
@@ -131,7 +140,7 @@ void Detector::handle_event(int fan_fd) {
                 // and add modified file to database
                 if (metadata->mask & FAN_CLOSE_WRITE) {
                     auto currentTime = ch::system_clock::now();
-                    this->addToDatabase(metadata->pid);
+//                    this->addToDatabase(metadata->pid);
 
                     if (access_file[path_fs.string()].first == metadata->pid) {
                         auto timeDiff = ch::duration<double, std::milli>(
@@ -146,7 +155,7 @@ void Detector::handle_event(int fan_fd) {
                                     terminate_executable(metadata->pid);
                                 }
                             }
-
+                            printf("FAN_CLOSE_WRITE: ");
                             susWrite[access_path[metadata->pid]] = ch::system_clock::now();
                         }
 
@@ -171,7 +180,7 @@ int Detector::startDecoder(int argc, char **argv) {
 
     if (fan_fd == -1) {
         LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
-        store.close();
+        DB.close();
         return EXIT_FAILURE;
     }
 
@@ -181,7 +190,7 @@ int Detector::startDecoder(int argc, char **argv) {
                       argv[1]) == -1) {
 
         LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
-        store.close();
+        DB.close();
         return EXIT_FAILURE;
     }
 
@@ -195,7 +204,7 @@ int Detector::startDecoder(int argc, char **argv) {
         if (pollNum == -1) {
 
             LOG_F(FATAL, strerror(errno));
-            store.close();
+            DB.close();
             return EXIT_FAILURE;
         }
         if (fds.revents & POLLIN) {
@@ -203,6 +212,6 @@ int Detector::startDecoder(int argc, char **argv) {
         }
     }
 
-    store.close();
+    DB.close();
     return EXIT_SUCCESS;
 }

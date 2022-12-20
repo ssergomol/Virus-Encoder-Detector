@@ -38,16 +38,12 @@ class Detector {
     // access_file map tracks the modified time and the process which made this modification
     // for each modifying file
     std::unordered_map <std::string,
-    std::pair<int, ch::time_point < ch::system_clock>>>
-    access_file;
+    std::pair<int, ch::time_point < ch::system_clock>>> access_file;
 
     // susWrite keeps track of last suspicious behavior of certain files
     std::unordered_map <std::string, ch::time_point<ch::system_clock>> susWrite;
 
     int eventsCount = 0;
-
-
-    Storage store;
 
 public:
     Detector(Storage *database) : DB(database) {}
