@@ -16,6 +16,10 @@
 #include <yaml-cpp/yaml.h>
 
 int main(int argc, char** argv) {
+    sqlite3_shutdown();
+    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    sqlite3_initialize();
+
     YAML::Node basenode = YAML::LoadFile("config.yaml");
     // Will also detect verbosity level on command line as -v.
     loguru::init(argc, argv);
