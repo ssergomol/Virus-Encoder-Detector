@@ -64,9 +64,9 @@ void Detector::addToDatabase(int pid) {
     if (!DB->File()->contains(exePath)) {
         File file(exePathString);
         DB->File()->insertFile(file);
-        LOG_F(INFO, "File %s is added to the database as modified", exePath)
+        LOG_F(INFO, "File %s is added to the database as modified", exePath);
     } else {
-        LOG_F(INFO, "File %s is already in database", exePath)
+        LOG_F(INFO, "File %s is already in database", exePath);
     }
 }
 
