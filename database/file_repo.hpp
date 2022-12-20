@@ -18,6 +18,8 @@ public:
 
     // Decode files encoded by process "pid"
     void recoverFiles(int pid);
+
+    bool contains(const std::string& path) const;
 };
 
 #endif
