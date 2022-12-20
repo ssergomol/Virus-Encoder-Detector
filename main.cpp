@@ -79,9 +79,8 @@ int main(int argc, char** argv) {
 //    }
 
 //    std::string path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";
-    std::string path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";
-    std::vector<char> content{'1', '2', '3'};
-    File file(path, content, 3, ::getpid());
+    const char* path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";;
+    File file(path,  ::getpid());
     database->File()->insertFile(file);
 //
 //    Detector detector(database);

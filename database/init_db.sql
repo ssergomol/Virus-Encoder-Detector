@@ -1,7 +1,5 @@
 CREATE TABLE modified_files(
     path TEXT PRIMARY KEY,
-    content BLOB,
-    size INTEGER,
     pid INTEGER
 );
 

@@ -10,23 +10,24 @@
 
 void FileRepo::insertFile(File file) {
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(store->getDB(), "INSERT INTO modified_files(path, content, size, pid)"
-                                                " VALUES(?, ?, ?, ?)", -1, &stmt, nullptr);
+    const char* query = "INSERT INTO modified_files(path, pid) VALUES(?1, ?2)";
+    int rc = sqlite3_prepare_v2(store->getDB(), query, strlen(query),
+                                &stmt, nullptr);
 
     CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
-    rc = sqlite3_bind_text(stmt, 1, reinterpret_cast<char *>(&file.getFileName()[0]),
-                           file.getFileName().size(), SQLITE_STATIC);
+    rc = sqlite3_bind_text(stmt, 1, file.getFileName().c_str(),
+                           file.getFileName().size(), SQLITE_TRANSIENT);
     CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
+//
+//    rc = sqlite3_bind_blob(stmt, 2, static_cast<void *>(file.getContent().data()),
+//                           file.getContent().size(), SQLITE_STATIC);
+//    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
+//
+//    rc = sqlite3_bind_int(stmt, 3, file.getSize());
+//    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
-    rc = sqlite3_bind_blob(stmt, 2, static_cast<void *>(file.getContent().data()),
-                           file.getContent().size(), SQLITE_STATIC);
-    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
-
-    rc = sqlite3_bind_int(stmt, 3, file.getSize());
-    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
-
-    rc = sqlite3_bind_int(stmt, 4, file.getPID());
+    rc = sqlite3_bind_int(stmt, 2, file.getPID());
     CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     sqlite3_step(stmt);

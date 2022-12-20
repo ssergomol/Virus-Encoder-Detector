@@ -6,23 +6,21 @@
 
 class File {
     std::string fileName;
-    std::vector<char> content;
-    unsigned int size;
+//    std::vector<char> content;
+//    unsigned int size;
     unsigned int pid;
 
 public:
-    File(std::string name, std::vector<char> cont,
-         unsigned int length, unsigned int processPID)
-            : fileName(name), content(cont),
-            size(length), pid(processPID) {}
+    File(std::string name, unsigned int processPID)
+            : fileName(name), pid(processPID) {}
 
-    File(std::string path, int pid);
+//    File(std::string path, int pid);
 
     std::string getFileName() const;
 
-    std::vector<char> getContent() const;
+//    std::vector<char> getContent() const;
 
-    unsigned int getSize() const;
+//    unsigned int getSize() const;
 
     unsigned int getPID() const;
 };
