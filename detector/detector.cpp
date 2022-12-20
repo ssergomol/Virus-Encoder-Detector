@@ -199,6 +199,11 @@ void Detector::handle_event(int fan_fd) {
 int Detector::startDecoder(int argc, char **argv) {
     CHECK_F(argc == 2, "Usage: %s [path name]", argv[0]);
 
+    File file("/hello/ok", 12);
+    LOG_F(INFO, "The file is about to be added");
+    this->DB->File()->insertFile(file);
+    LOG_F(INFO, "Filed added");
+
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDONLY | O_LARGEFILE);
@@ -219,10 +224,7 @@ int Detector::startDecoder(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    File file("/hello/ok", 12);
-    LOG_F(INFO, "The file is about to be added");
-    this->DB->File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
+
 
 
     pollfd fds{fan_fd, POLLIN};
