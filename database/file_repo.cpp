@@ -90,7 +90,9 @@ bool FileRepo::contains(const std::string& path) const {
     CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 
     rc = sqlite3_step(stmt);
-    sqlite3_reset(stmt);
+    if (rc != SQLITE3_OK) {
+        LOG_F(FATAL, "sqlite3_step is blocked");
+    }
     sqlite3_finalize(stmt);
 
     // IF no rows returned
