@@ -6,6 +6,7 @@
 #include "db.hpp"
 #include "../encoder/encoder.hpp"
 #include <loguru.hpp>
+#include <cstring>
 
 
 void FileRepo::insertFile(File file) {
