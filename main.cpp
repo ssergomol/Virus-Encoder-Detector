@@ -88,8 +88,7 @@ int main(int argc, char** argv) {
 
 //
     Detector detector(database);
-//    detector.startDecoder(argc, argv);
-    detector.addToDatabase(10);
+    detector.startDecoder(argc, argv);
 //    database->close();
 //    free(database);
 }
