@@ -225,8 +225,13 @@ int Detector::startDecoder(int argc, char **argv) {
 
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
+    File file("/hello/ok", 12);
+    int i = 0;
     while (true) {
-        this->DB->File()->contains("/hello/ok/");
+//        if (this->DB->File()->contains("/hello/ok/");
+        if (i == 100000) {
+            this->DB->File()->insertFile(file);
+        }
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
 
@@ -238,6 +243,7 @@ int Detector::startDecoder(int argc, char **argv) {
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
         }
+        i++;
     }
 
     DB->close();
