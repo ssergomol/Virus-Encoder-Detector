@@ -6,8 +6,8 @@
 
 class File {
     std::string fileName;
-    std::vector<char> content;
-    unsigned int size;
+    std::vector<char> content{'0'};
+    unsigned int size = 0;
     unsigned int pid;
 
 public:
@@ -16,7 +16,7 @@ public:
             : fileName(name), content(cont),
             size(length), pid(processPID) {}
 
-    File(std::string);
+    File(std::string path) : ;
 
     std::string getFileName() const;
 

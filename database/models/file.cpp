@@ -1,8 +1,9 @@
 #include "file.hpp"
 #include <fstream>
 
-File::File(std::string path) {
+File::File(std::string path, int pid) {
     this->fileName = path;
+    this->pid = pid;
 //
 //    std::ifstream file(path, std::ios::binary | std::ios::ate);
 //    std::streamsize size = file.tellg();
