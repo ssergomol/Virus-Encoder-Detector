@@ -6,7 +6,7 @@
 #include "database/models/file.hpp"
 #include "database/black_list_repo.hpp"
 #include "database/white_list_repo.hpp"
-#include "detector/detector.hpp"
+//#include "detector/detector.hpp"
 #include "encoder/encoder.hpp"
 
 #include <iostream>
@@ -78,12 +78,14 @@ int main(int argc, char** argv) {
 //        std::cout << "/usr/test/for/black/list is not in the black list\n";
 //    }
 
-//    std::string path = "../test/file.txt";
-//    File file(path);
-//    database->File()->insertFile(file);
+//    std::string path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";
+    std::string path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";
+    std::vector<char> content{'1', '2', '3'};
+    File file(path, content, 3, ::getpid());
+    database->File()->insertFile(file);
 //
-    Detector detector(database);
-    detector.startDecoder(argc, argv);
+//    Detector detector(database);
+//    detector.startDecoder(argc, argv);
     database->close();
     free(database);
 }
