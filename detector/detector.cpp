@@ -51,17 +51,18 @@ void Detector::terminate_executable(int pid) {
 }
 
 void Detector::addToDatabase(int pid) {
+//
+//    char exePath[PATH_MAX];
+//    std::string linkToExe;
+//
+//    linkToExe = "/proc/" + std::to_string(pid) + "/exe";
+//    ssize_t len = readlink(linkToExe.c_str(), exePath, sizeof(exePath) - 1);
+//    if (len != -1) {
+//        exePath[len] = '\0';
+//    }
 
-    char exePath[PATH_MAX];
-    std::string linkToExe;
-
-    linkToExe = "/proc/" + std::to_string(pid) + "/exe";
-    ssize_t len = readlink(linkToExe.c_str(), exePath, sizeof(exePath) - 1);
-    if (len != -1) {
-        exePath[len] = '\0';
-    }
-
-    std::string filePath = exePath;
+    std::string filePath = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";
+//    std::string filePath = exePath;
 //    if (!DB->File()->contains(exePath)) {
 ////        std::vector<char> content{'1', '2', '3'};
 ////        File file(exePathString, content, 3, pid);
