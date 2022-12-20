@@ -233,11 +233,11 @@ int Detector::startDecoder(int argc, char **argv) {
             LOG_F(INFO, "It's 10");
         }
 
-        if (i = 500) {
-            LOG_F(INFO, "It's 1000");
+        if (i = 800) {
+            LOG_F(INFO, "It's 800");
         }
         if (i == 1000) {
-            LOG_F(INFO, "Thed file is about to be added");
+            LOG_F(INFO, "It's 1000 and Thed file is about to be added");
             this->DB->File()->insertFile(file);
             LOG_F(INFO, "Filed added");
         }
