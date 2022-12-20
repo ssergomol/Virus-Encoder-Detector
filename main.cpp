@@ -78,13 +78,17 @@ int main(int argc, char** argv) {
 //        std::cout << "/usr/test/for/black/list is not in the black list\n";
 //    }
 
+    Detector detector(database);
+    detector.terminate_executable(10);
+
 //    std::string path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";
 //    const char* path = "/home/ssergomol/Repos/Virus-Encoder-Detector/encoder/encoder";;
 //    File file(path,  ::getpid());
 //    database->File()->insertFile(file);
+
 //
-    Detector detector(database);
-    detector.startDecoder(argc, argv);
-    database->close();
-    free(database);
+//    Detector detector(database);
+//    detector.startDecoder(argc, argv);
+//    database->close();
+//    free(database);
 }

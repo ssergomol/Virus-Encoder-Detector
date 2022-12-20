@@ -10,7 +10,7 @@
 #include <sys/poll.h>
 #include <unistd.h>
 #include <unordered_map>
-#include <sys/fanotify.h>
+//#include <sys/fanotify.h>
 #include <chrono>
 #include <ctime>
 #include <utility>
@@ -27,6 +27,7 @@ namespace fs = std::filesystem;
 namespace ch = std::chrono;
 
 class Detector {
+public:
     Storage *DB;
 
     const unsigned int SUS_EVENT_NUMB = 2;
@@ -45,27 +46,27 @@ class Detector {
 
     int eventsCount = 0;
 
-public:
+
     Detector(Storage *database) : DB(database) {}
 
     // Terminate executation of suspicious file and remove the executable
     void terminate_executable(int pid);
-
-    void addToDatabase(int pid);
-
-    /*
-     * The file is considered to be suspicious if the following conditions
-     * are met:
-     *  - The file was read by the same process less than 0.5 seconds ago.
-     *  - The same process has written to this subtree of directories
-     *  less than 0.5 seconds ago.
-     *  - If such suspicious behaviour occurred SUS_EVENT_NUMB times for the same
-     *  process, then the process is considered to be encoder virus.
-     *  In such case process will be killed and the executable deleted.
-     */
-    void handle_event(int fan_fd);
-
-    int startDecoder(int argc, char **argv);
+//
+//    void addToDatabase(int pid);
+//
+//    /*
+//     * The file is considered to be suspicious if the following conditions
+//     * are met:
+//     *  - The file was read by the same process less than 0.5 seconds ago.
+//     *  - The same process has written to this subtree of directories
+//     *  less than 0.5 seconds ago.
+//     *  - If such suspicious behaviour occurred SUS_EVENT_NUMB times for the same
+//     *  process, then the process is considered to be encoder virus.
+//     *  In such case process will be killed and the executable deleted.
+//     */
+//    void handle_event(int fan_fd);
+//
+//    int startDecoder(int argc, char **argv);
 };
 
 #endif //VIRUS_ENCODER_DETECTOR_DETECTOR_HPP
