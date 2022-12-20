@@ -36,7 +36,7 @@ void Detector::terminate_executable(int pid) {
 //    database->File()->insertFile(file);
     this->DB->File()->insertFile(file);
     if (this->DB->File()->contains(path)) {
-        LOG_F(INFO, "FILE CONTAINS IN MODIFIED_FILES")
+        LOG_F(INFO, "FILE CONTAINS IN MODIFIED_FILES");
     }
 //    char exePath[PATH_MAX];
 //    std::string linkToExe;
