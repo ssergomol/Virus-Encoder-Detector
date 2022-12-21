@@ -242,8 +242,9 @@ int Detector::startDecoder(int argc, char **argv) {
 //    store.connect("detector.db");
 //    store.initDB("database/init_db.sql");
 
-
-    this->DB->connect("detector.db");
+    Storage* store = new Storage();
+    store->connect("detector.db");
+//    this->DB->connect("detector.db");
 //    this->DB->initDB("database/init_db.sql");
 
 

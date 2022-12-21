@@ -28,7 +28,7 @@ void Storage::connect(const std::string& url) {
     LOG_F(INFO, "Before open");
 //    int rc = sqlite3_open_v2(url.c_str(), &db, SQLITE_OPEN_READWRITE
 //                                                 | SQLITE_OPEN_CREATE, nullptr);
-    int rc = sqlite3_open(url.c_str(), &this->db);
+    int rc = sqlite3_open(url.c_str(), &db);
 //    int rc = sqlite3_open_v2(url.c_str(), &db, SQLITE_OPEN_MEMORY, 0);
     LOG_F(INFO, "After open");
     if (rc != SQLITE_OK) {
@@ -36,7 +36,7 @@ void Storage::connect(const std::string& url) {
         return;
     } else {
         LOG_F(INFO, "Database connection opened successfully");
-//        this->db = db;
+        this->db = db;
     }
 }
 
