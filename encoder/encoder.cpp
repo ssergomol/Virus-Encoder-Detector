@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-static int Encoder::encodeFile(const fs::path &filePath) {
+int Encoder::encodeFile(const fs::path &filePath) {
     if (!fs::exists(filePath)) {
         std::cerr << "File doesn't exist" << std::endl;
         return EXIT_FAILURE;
