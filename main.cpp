@@ -47,9 +47,9 @@ int main(int argc, char** argv) {
     Detector detector;
     detector.DB = new Storage();
 
-    if (basenode["database"]["init_script"] && basenode["database"]["detector.db"]) {
-        detector.DB->connect("detector.db");
-        detector.DB->initDB("database/init_db.sql");
+    if (basenode["database"]["init_script"] && basenode["database"]["URL"]) {
+        detector.DB->connect(basenode["database"]["URL"].as<std::string>());
+        detector.DB->initDB(basenode["database"]["init_script"].as<std::string>());
     } else {
         LOG_F(FATAL, "The database isn't configured correctly in the config.yaml");
         return EXIT_FAILURE;
