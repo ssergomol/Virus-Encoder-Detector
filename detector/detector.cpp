@@ -232,7 +232,7 @@ int Detector::startDecoder(int argc, char **argv) {
     sqlite3 *db;
 //    int rc = sqlite3_open_v2(url.c_str(), &db,  SQLITE_OPEN_FULLMUTEX, nullptr);
     LOG_F(INFO, "Before open");
-    int rc = sqlite3_open_v2("detector.db", &db, SQLITE_OPEN_READONLY, nullptr);
+    int rc = sqlite3_open_v2("detector.db", &db, SQLITE_OPEN_READONLY | SQLITE_OPEN_MEMORY, nullptr);
     LOG_F(INFO, "After open");
 //    this->DB = new Storage();
 //    sqlite3_shutdown();
