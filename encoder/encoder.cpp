@@ -10,7 +10,6 @@
 namespace fs = std::filesystem;
 
 int Encoder::encodeFile(const fs::path &filePath) {
-    std::cout << "I am in encode file func\n";
     if (!fs::exists(filePath)) {
         std::cerr << "File doesn't exist" << std::endl;
         return EXIT_FAILURE;
@@ -21,7 +20,6 @@ int Encoder::encodeFile(const fs::path &filePath) {
     FILE *fp;
 
     std::vector<char> buffer(fileSize);
-    std::cout << "I am trying to open the file\n";
 
 
     fp = fopen(filePath.c_str(), "r");
@@ -31,8 +29,6 @@ int Encoder::encodeFile(const fs::path &filePath) {
         std::cerr << "File opening in read failed\n";
         return errno;
     }
-
-    std::cout << "I am trying to read the file\n";
 
     // Copy file content to buffer
     size_t bytesRead = fread(&buffer[0], 1, fileSize, fp);
