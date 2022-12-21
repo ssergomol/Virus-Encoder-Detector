@@ -2,21 +2,30 @@
 #include <filesystem>
 #include <algorithm>
 #include <vector>
+#include "encoder.hpp"
+//#include <loguru.hpp>
+#include <stdio.h>
+#include <stdlib.h>
 
 namespace fs = std::filesystem;
 
-const char KEY = 57;
+int Encoder::encodeFile(const fs::path &filePath) {
+    if (!fs::exists(filePath)) {
+        std::cerr << "File doesn't exist" << std::endl;
+        return EXIT_FAILURE;
+    }
 
-// Encode files byte by byte using XOR encrypting
-int encodeFile(const fs::path &filePath) {
     std::error_code errorCode;
     std::uintmax_t fileSize = fs::file_size(filePath, errorCode);
     FILE *fp;
 
     std::vector<char> buffer(fileSize);
 
+
     fp = fopen(filePath.c_str(), "r");
     if (!fp) {
+        std::cout << "Failed\n";
+
         std::cerr << "File opening in read failed\n";
         return errno;
     }
@@ -51,7 +60,7 @@ int encodeFile(const fs::path &filePath) {
     return 0;
 }
 
-int main(int argc, char **argv) {
+int Encoder::start_encoder(int argc, char **argv) {
     std::string targetPath;
 
     // Check if there is a valid argument number

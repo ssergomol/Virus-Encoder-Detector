@@ -16,27 +16,23 @@
 #include <cstring>
 #include <string>
 #include <csignal>
-
+#include <sqlite3/sqlite3.h>
+#include "../database/db.hpp"
+#include "../database/file_repo.hpp"
+#include "detector.hpp"
+#include "../database/black_list_repo.hpp"
+#include "../database/white_list_repo.hpp"
+#include "../database/models/file.hpp"
+#include <loguru/loguru.hpp>
+#include <mutex>
+#include <chrono>
+#include <thread>
 
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
-const unsigned int SUS_EVENT_NUMB = 2;
-
-// access_path map for each process tracks the parent subdirectory where
-// this process changes some files. It updates only in case if changing file is not
-// in folder which is a child for chosen parent directory
-std::unordered_map<int, std::string> access_path;
-
-// access_file map tracks the modified time and the process which made this modification
-// for each modifying file
-std::unordered_map<std::string, std::pair<int, ch::time_point<ch::system_clock>>> access_file;
-
-// susWrite keeps track of last suspicious behavior of certain files
-std::unordered_map<std::string, ch::time_point<ch::system_clock>> susWrite;
-int eventsCount = 0;
 
 // Terminate executation of suspicious file and remove the executable
-void terminate_executable(int pid) {
+void Detector::terminate_executable(int pid) {
     char exePath[PATH_MAX];
     std::string linkToExe;
 
@@ -46,21 +42,43 @@ void terminate_executable(int pid) {
         exePath[len] = '\0';
     }
     kill(pid, SIGKILL);
-//    std::remove(exePath);
-    std::cout << "\n\nRemoved suspicious file: " << exePath << "\n\n";
+
+//     Put executable into the black list
+    if (!this->DB->BlackList()->contains(std::string(exePath))) {
+        this->DB->BlackList()->addExe(std::string(exePath));
+    }
+
+    LOG_F(INFO, "Binary file %s was detected as suspicious and put into the black_list", exePath);
+    LOG_F(INFO, "Suspicious process %d is killed", pid);
+
+    // Recover files
+//    DB->File()->recoverFiles(pid);
+//    DB->File()->removeFromDB(pid);
 }
 
-/*
- * The file is considered to be suspicious if the following conditions
- * are met:
- *  - The file was read by the same process less than 0.5 seconds ago.
- *  - The same process has written to this subtree of directories
- *  less than 0.5 seconds ago.
- *  - If such suspicious behaviour occurred SUS_EVENT_NUMB times for the same
- *  process, then the process is considered to be encoder virus.
- *  In such case process will be killed and the executable deleted.
- */
-void handle_event(int fan_fd) {
+void Detector::addToDatabase(int pid, int fd) {
+    char fileLink[PATH_MAX];
+    char path[PATH_MAX];
+
+    /* Retrieve and print pathname of the accessed file. */
+    snprintf(fileLink, sizeof(fileLink),
+             "/proc/self/fd/%d", fd);
+    int path_len = readlink(fileLink, path,
+                        sizeof(path) - 1);
+
+    CHECK_F(path_len != -1, "Couldn't read link");
+    path[path_len] = '\0';
+
+    std::string filePath = path;
+    File file(filePath, pid);
+
+    if (!this->DB->File()->contains(filePath)) {
+        this->DB->File()->insertFile(file);
+        LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
+    }
+}
+
+void Detector::handle_event(int fan_fd) {
     fanotify_event_metadata *metadata;
     fanotify_response response;
     fanotify_event_metadata buf[200];
@@ -72,6 +90,7 @@ void handle_event(int fan_fd) {
 
     while (true) {
         len = read(fan_fd, buf, sizeof(buf));
+        CHECK_F(!(len == -1 && errno != EAGAIN), "Failed to read file: %s", strerror(errno));
         if (len == -1 && errno != EAGAIN) {
             std::cerr << "Failed to read file\n";
             exit(EXIT_FAILURE);
@@ -91,6 +110,7 @@ void handle_event(int fan_fd) {
                          "/proc/self/fd/%d", metadata->fd);
 
                 path_len = readlink(procPath, path, sizeof(path) - 1);
+                CHECK_F(path_len != -1, "Failed to read link %s: %s", procPath, strerror(errno));
                 if (path_len == -1) {
                     std::cerr << "Failed to read link " << procPath << "\n";
                     exit(EXIT_FAILURE);
@@ -99,9 +119,16 @@ void handle_event(int fan_fd) {
                 path[path_len] = '\0';
                 path_fs = path;
 
+//                LOG_F(INFO, "File %s is accessed by process %d\n", path, metadata->pid);
+                // If accessed file in the white list, then skip
+                if (this->DB->WhiteList()->contains(std::string(path))) {
+                    LOG_F(INFO, "Found %s in the wight list", path);
+                    continue;
+                }
+
+
                 // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
-                    printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
 
@@ -117,38 +144,36 @@ void handle_event(int fan_fd) {
                             access_path[metadata->pid] = path_fs.parent_path().string();
                         }
                     }
-                    auto pair = std::pair<unsigned, ch::time_point<ch::system_clock>>(metadata->pid,
-                                                                                      ch::system_clock::now());
+                    auto pair = std::pair < unsigned, ch::time_point<ch::system_clock>>
+                    (metadata->pid,
+                            ch::system_clock::now());
                     access_file[path_fs.string()] = pair;
                 }
 
                 // Send response if some process intends to write to the file
+                // and add modified file to database
                 if (metadata->mask & FAN_CLOSE_WRITE) {
+                    this->addToDatabase(metadata->pid, metadata->fd);
                     auto currentTime = ch::system_clock::now();
 
                     if (access_file[path_fs.string()].first == metadata->pid) {
                         auto timeDiff = ch::duration<double, std::milli>(
-                                 currentTime - access_file[path_fs.string()].second).count();
+                                currentTime - access_file[path_fs.string()].second).count();
 
                         if (timeDiff < 500) {
                             if (susWrite.contains(access_path[metadata->pid])
-                            && ch::duration<double, std::milli>(
+                                && ch::duration<double, std::milli>(
                                     currentTime - susWrite[access_path[metadata->pid]]).count() < 500) {
                                 eventsCount++;
                                 if (eventsCount == SUS_EVENT_NUMB) {
-                                    std::cout << "Suspicious process: " << metadata->pid << "\n";
                                     terminate_executable(metadata->pid);
                                 }
                             }
-
-                    printf("FAN_CLOSE_WRITE: ");
                             susWrite[access_path[metadata->pid]] = ch::system_clock::now();
                         }
 
                     }
                 }
-
-                std::cout << "File " << path << " PID " << metadata->pid << "\n";
 
                 // Close the file descriptor of the event
                 close(metadata->fd);
@@ -159,43 +184,47 @@ void handle_event(int fan_fd) {
     }
 }
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " [path name]\n";
-        exit(EXIT_FAILURE);
-    }
+int Detector::startDecoder(int argc, char **argv) {
+    CHECK_F(argc == 2, "Usage: %s [path name]", argv[0]);
 
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
-                               O_RDONLY | O_LARGEFILE);
+                               O_RDWR | O_LARGEFILE);
 
     if (fan_fd == -1) {
-        std::cerr << "Failed to init fanotify watch queue\n";
-        exit(EXIT_FAILURE);
+        LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
+        return EXIT_FAILURE;
     }
 
     // Add dir to watch queue
     if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
-        std::cerr << "Failed to mark file or directory\n";
-        exit(EXIT_FAILURE);
+
+        LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
+        return EXIT_FAILURE;
     }
 
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
 
     // Wait until event occurs
+    LOG_F(INFO, "Fanotify set up and ready for supervising");
+
     while (true) {
         int pollNum = poll(&fds, 1, -1);
         if (pollNum == -1) {
-            std::cerr << std::strerror(errno);
-            exit(EXIT_FAILURE);
+
+            LOG_F(FATAL, strerror(errno));
+            delete(DB);
+            return EXIT_FAILURE;
         }
+
         if (fds.revents & POLLIN) {
             handle_event(fds.fd);
         }
     }
 
-    return 0;
+    delete(DB);
+    return EXIT_SUCCESS;
 }
