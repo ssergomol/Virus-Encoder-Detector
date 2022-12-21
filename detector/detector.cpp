@@ -219,7 +219,7 @@ int Detector::startDecoder(int argc, char **argv) {
     }
 
     // Add dir to watch queue
-    if (fanotify_mark(fan_fd, FAN_CLOEXEC | FAN_MARK_ADD | FAN_MARK_MOUNT,
+    if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
 
@@ -229,6 +229,10 @@ int Detector::startDecoder(int argc, char **argv) {
     }
 
 //    this->DB = new Storage();
+    sqlite3_shutdown();
+    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    sqlite3_initialize();
+
     Storage store;
     store.connect("detector.db");
     store.initDB("database/init_db.sql");
@@ -266,9 +270,7 @@ int Detector::startDecoder(int argc, char **argv) {
     LOG_F(INFO, "Fanotify set up and ready for supervising");
 
 
-//    sqlite3_shutdown();
-//    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
-//    sqlite3_initialize();
+
 
 
 //    while (true) {
