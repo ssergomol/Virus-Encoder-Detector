@@ -247,7 +247,7 @@ int Detector::startDecoder(int argc, char **argv) {
     this->DB->initDB("database/init_db.sql");
 
 
-    File file("/hello/ok", 12);
+//    File file("/hello/ok", 12);
 //    this->DB->File()->insertFile(file);
 //
 //    if (!store.File()->contains(file.getFileName())) {
