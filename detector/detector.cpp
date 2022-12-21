@@ -230,7 +230,7 @@ int Detector::startDecoder(int argc, char **argv) {
 
     this->DB = new Storage();
 
-    this->DB->connect("detector.db");
+    this->DB->connect("~/detector.db");
     this->DB->initDB("database/init_db.sql");
 
     File file("/hello/ok", 12);
