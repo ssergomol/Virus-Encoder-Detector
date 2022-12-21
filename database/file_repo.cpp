@@ -71,7 +71,8 @@ void FileRepo::recoverFiles(int pid) {
         LOG_F(INFO, "Waiting for results");
         char* pathString = (char*)sqlite3_column_text(stmt, 0);
         LOG_F(INFO, "%s", pathString);
-        const std::filesystem::path path = pathString;
+        std::filesystem::path path = pathString;
+
 
         // decode encoded file
         Encoder::encodeFile(path);
