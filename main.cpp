@@ -45,5 +45,14 @@ int main(int argc, char** argv) {
     loguru::g_stderr_verbosity = 1;
 
     Detector detector;
+    detector.DB = new Storage();
+
+    if (basenode["database"]["init_script"] && basenode["database"]["detector.db"]) {
+        detector.DB->connect("detector.db");
+        detector.DB->initDB("database/init_db.sql");
+    } else {
+        LOG_F(FATAL, "The database isn't configured correctly in the config.yaml");
+        return EXIT_FAILURE;
+    }
     detector.startDecoder(argc, argv);
 }
