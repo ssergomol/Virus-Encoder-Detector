@@ -202,7 +202,7 @@ int Detector::startDecoder(int argc, char **argv) {
 
     // Init watch queue
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
-                               O_RDONLY | O_LARGEFILE);
+                               O_RDWR | O_LARGEFILE);
 
 
 
@@ -227,7 +227,7 @@ int Detector::startDecoder(int argc, char **argv) {
         delete(DB);
         return EXIT_FAILURE;
     }
-    close(fan_fd);
+//    close(fan_fd);
 
     sqlite3 *db;
 //    int rc = sqlite3_open_v2(url.c_str(), &db,  SQLITE_OPEN_FULLMUTEX, nullptr);
