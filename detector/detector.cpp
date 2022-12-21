@@ -242,31 +242,29 @@ int Detector::startDecoder(int argc, char **argv) {
 //    store.connect("detector.db");
 //    store.initDB("database/init_db.sql");
 
-    this->DB = new Storage();
-//    Storage* store = new Storage();
-    this->DB->connect("detector.db");
-//    this->DB->connect("detector.db");
-//    this->DB->initDB("database/init_db.sql");
+    DB = new Storage();
+    DB->connect("detector.db");
+    DB->initDB("database/init_db.sql");
 
 
-//    File file("/hello/ok", 12);
-//    this->DB->File()->insertFile(file);
-//
-//    if (!store.File()->contains(file.getFileName())) {
-//        LOG_F(INFO, "File /hello/ok is not in the database");
-//    } else {
-//        LOG_F(INFO, "File /hello/ok is in the database");
-//    }
-//
-//    LOG_F(INFO, "The file is about to be added");
-//    store.File()->insertFile(file);
-//    LOG_F(INFO, "Filed added");
-//
-//    if (!store.File()->contains(file.getFileName())) {
-//        LOG_F(INFO, "File /hello/ok is not in the database");
-//    } else {
-//        LOG_F(INFO, "File /hello/ok is in the database");
-//    }
+    File file("/hello/ok", 12);
+    DB->File()->insertFile(file);
+
+    if (!DB.File()->contains(file.getFileName())) {
+        LOG_F(INFO, "File /hello/ok is not in the database");
+    } else {
+        LOG_F(INFO, "File /hello/ok is in the database");
+    }
+
+    LOG_F(INFO, "The file is about to be added");
+    DB->File()->insertFile(file);
+    LOG_F(INFO, "Filed added");
+
+    if (!DB->File()->contains(file.getFileName())) {
+        LOG_F(INFO, "File /hello/ok is not in the database");
+    } else {
+        LOG_F(INFO, "File /hello/ok is in the database");
+    }
 
 
 
@@ -296,6 +294,6 @@ int Detector::startDecoder(int argc, char **argv) {
 //        }
 //    }
 
-//    delete(DB);
+    delete(DB);
     return EXIT_SUCCESS;
 }
