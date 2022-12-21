@@ -7,6 +7,7 @@
 #include "../encoder/encoder.hpp"
 #include <loguru.hpp>
 #include <cstring>
+#include <limits.h>
 
 
 void FileRepo::insertFile(File file) {
