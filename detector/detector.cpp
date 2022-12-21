@@ -55,18 +55,15 @@ void Detector::terminate_executable(int pid) {
 void Detector::addToDatabase(int pid, int fd) {
     char fileLink[PATH_MAX];
     char path[PATH_MAX];
+
     /* Retrieve and print pathname of the accessed file. */
     snprintf(fileLink, sizeof(fileLink),
              "/proc/self/fd/%d", fd);
     int path_len = readlink(fileLink, path,
                         sizeof(path) - 1);
-    if (path_len == -1) {
-        perror("readlink");
-        exit(EXIT_FAILURE);
-    }
 
+    CHECK_F(path_len != -1, "Couldn't read link");
     path[path_len] = '\0';
-    printf("File %s\n", path);
 
     std::string filePath = path;
     File file(filePath, pid);
@@ -121,14 +118,13 @@ void Detector::handle_event(int fan_fd) {
 //                LOG_F(INFO, "File %s is accessed by process %d\n", path, metadata->pid);
                 // If accessed file in the white list, then skip
                 if (this->DB->WhiteList()->contains(std::string(path))) {
+                    LOG_F(INFO, "Found %s in the wight list", path);
                     continue;
                 }
-//                std::cout << path << " not in white list, continue\n";
 
 
                 // Send response if some process intends to read the file
                 if (metadata->mask & FAN_ACCESS_PERM) {
-//                    printf("FAN_ACCESS_PERM: ");
                     response.fd = metadata->fd;
                     response.response = FAN_ALLOW;
 
@@ -169,7 +165,6 @@ void Detector::handle_event(int fan_fd) {
                                     terminate_executable(metadata->pid);
                                 }
                             }
-//                            printf("FAN_CLOSE_WRITE: ");
                             susWrite[access_path[metadata->pid]] = ch::system_clock::now();
                         }
 
@@ -192,14 +187,6 @@ int Detector::startDecoder(int argc, char **argv) {
     int fan_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK,
                                O_RDWR | O_LARGEFILE);
 
-
-
-
-//    File file("/hello/ok", 12);
-//    LOG_F(INFO, "The file is about to be added");
-//    this->DB->File()->insertFile(file);
-//    LOG_F(INFO, "Filed added");
-
     if (fan_fd == -1) {
         LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
         return EXIT_FAILURE;
@@ -213,22 +200,6 @@ int Detector::startDecoder(int argc, char **argv) {
         LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
         return EXIT_FAILURE;
     }
-//    close(fan_fd);
-
-//    sqlite3 *db;
-//    int rc = sqlite3_open_v2(url.c_str(), &db,  SQLITE_OPEN_FULLMUTEX, nullptr);
-//    LOG_F(INFO, "Before open");
-//    int rc = sqlite3_open_v2("detector.db", &db, SQLITE_OPEN_READWRITE
-//    | SQLITE_OPEN_CREATE | SQLITE_OPEN_MEMORY, nullptr);
-//    LOG_F(INFO, "After open");
-//    this->DB = new Storage();
-//    sqlite3_shutdown();
-//    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
-//    sqlite3_initialize();
-
-//    Storage store;
-//    store.connect("detector.db");
-//    store.initDB("database/init_db.sql");
 
     DB = new Storage();
     DB->connect("detector.db");
