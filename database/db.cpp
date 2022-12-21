@@ -63,10 +63,10 @@ void Storage::initDB(const std::string &initFileName) {
         std::string init(buffer.begin(), buffer.end());
 //            const char* sql = "SELECT * from files;";
 //            const char* insert = "INSERT INTO files(path, content, size) VALUES (\"/home/ssergomol/\", '54455354', 25);";
-        int rc = sqlite3_exec(this->db, init.c_str(),
-                              this->callback, nullptr, &zErrMsg);
-
-        CHECK_F(rc == SQLITE_OK, "SQL error: %s\n", zErrMsg);
+//        int rc = sqlite3_exec(this->db, init.c_str(),
+//                              this->callback, nullptr, &zErrMsg);
+//
+//        CHECK_F(rc == SQLITE_OK, "SQL error: %s\n", zErrMsg);
     }
 }
 
