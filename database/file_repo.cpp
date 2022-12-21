@@ -10,8 +10,8 @@
 
 
 void FileRepo::insertFile(File file) {
-    sqlite3_stmt *stmt;
-    const char* query = "INSERT INTO modified_files(path, pid) VALUES(?1, ?2)";
+//    sqlite3_stmt *stmt;
+//    const char* query = "INSERT INTO modified_files(path, pid) VALUES(?1, ?2)";
 //    int rc = sqlite3_prepare_v2(store->getDB(), query, strlen(query),
 //                                &stmt, nullptr);
 //

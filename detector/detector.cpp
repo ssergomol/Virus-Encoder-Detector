@@ -248,7 +248,7 @@ int Detector::startDecoder(int argc, char **argv) {
 
 
     File file("/hello/ok", 12);
-    this->DB->File()->insertFile(file);
+//    this->DB->File()->insertFile(file);
 //
 //    if (!store.File()->contains(file.getFileName())) {
 //        LOG_F(INFO, "File /hello/ok is not in the database");
