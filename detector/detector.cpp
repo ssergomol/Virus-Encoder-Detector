@@ -43,7 +43,7 @@ void Detector::terminate_executable(int pid) {
     }
     kill(pid, SIGKILL);
 
-     Put executable into the black list
+//     Put executable into the black list
     if (!this->DB->BlackList()->contains(std::string(exePath))) {
         this->DB->BlackList()->addExe(std::string(exePath));
     }
