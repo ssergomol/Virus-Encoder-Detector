@@ -219,7 +219,7 @@ int Detector::startDecoder(int argc, char **argv) {
     }
 
     // Add dir to watch queue
-    if (fanotify_mark(fan_fd, FAN_MARK_ADD,
+    if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
 
@@ -275,10 +275,6 @@ int Detector::startDecoder(int argc, char **argv) {
 
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
-
-
-
-
 
     while (true) {
         int pollNum = poll(&fds, 1, -1);
