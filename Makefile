@@ -25,7 +25,8 @@ run:
 	sudo mount --bind $(TARGET) $(TARGET)-mount
 	sudo ./exe $(TARGET)-mount 
 
-clean:
-	rm -rf sqlite3.o loguru.o $(BIN) $(TARGET)-mount
+clean: 
+	sudo umount $(TARGET)-mount
+	rm -rf sqlite3.o loguru.o $(BIN) $(TARGET)-mount detector.db
 
 .PHONY: all
