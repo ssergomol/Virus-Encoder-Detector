@@ -153,7 +153,7 @@ void Detector::handle_event(int fan_fd) {
                 // Send response if some process intends to write to the file
                 // and add modified file to database
                 if (metadata->mask & FAN_CLOSE_WRITE) {
-                    this->addToDatabase(metadata->pid);
+                    this->addToDatabase(metadata->pid, metadata->fd);
                     auto currentTime = ch::system_clock::now();
 
                     if (access_file[path_fs.string()].first == metadata->pid) {

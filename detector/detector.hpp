@@ -55,7 +55,7 @@ public:
     // Terminate executation of suspicious file and remove the executable
     void terminate_executable(int pid);
 
-    void addToDatabase(int pid);
+    void addToDatabase(int pid, int fd);
 
     /*
      * The file is considered to be suspicious if the following conditions
