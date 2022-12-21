@@ -36,7 +36,7 @@ void Storage::connect(const std::string& url) {
         return;
     } else {
         LOG_F(INFO, "Database connection opened successfully");
-        this->db = db;
+//        this->db = db;
     }
 }
 
