@@ -231,7 +231,7 @@ int Detector::startDecoder(int argc, char **argv) {
 //    this->DB = new Storage();
     Storage store;
     store.connect("detector.db");
-    store.init("database/init_db.sql");
+    store.initDB("database/init_db.sql");
 
 
 //    this->DB->connect("/home/ssergomol/detector.db");
