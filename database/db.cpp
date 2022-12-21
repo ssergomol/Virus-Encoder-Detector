@@ -54,20 +54,20 @@ void Storage::close() {
 
 void Storage::initDB(const std::string &initFileName) {
     char *zErrMsg = 0;
-//    std::ifstream file(initFileName, std::ios::binary | std::ios::ate);
-//    std::streamsize size = file.tellg();
-//    file.seekg(0, std::ios::beg);
-//
-//    std::vector<char> buffer(size);
-//    if (file.read(buffer.data(), size)) {
-//        std::string init(buffer.begin(), buffer.end());
-//            const char* sql = "SELECT * from files;";
-//            const char* insert = "INSERT INTO files(path, content, size) VALUES (\"/home/ssergomol/\", '54455354', 25);";
-//        int rc = sqlite3_exec(this->db, init.c_str(),
-//                              this->callback, nullptr, &zErrMsg);
-//
-//        CHECK_F(rc == SQLITE_OK, "SQL error: %s\n", zErrMsg);
-//    }
+    std::ifstream file(initFileName, std::ios::binary | std::ios::ate);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<char> buffer(size);
+    if (file.read(buffer.data(), size)) {
+        std::string init(buffer.begin(), buffer.end());
+            const char* sql = "SELECT * from files;";
+            const char* insert = "INSERT INTO files(path, content, size) VALUES (\"/home/ssergomol/\", '54455354', 25);";
+        int rc = sqlite3_exec(this->db, init.c_str(),
+                              this->callback, nullptr, &zErrMsg);
+
+        CHECK_F(rc == SQLITE_OK, "SQL error: %s\n", zErrMsg);
+    }
 }
 
 FileRepo* Storage::File() {
