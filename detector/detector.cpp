@@ -50,6 +50,10 @@ void Detector::terminate_executable(int pid) {
 
     LOG_F(INFO, "Binary file %s was detected as suspicious and put into the black_list", exePath);
     LOG_F(INFO, "Suspicious process %d is killed", pid);
+
+    // Recover files
+    DB->File()->recoverFiles(pid);
+    DB->File()->removeFromDB(pid);
 }
 
 void Detector::addToDatabase(int pid, int fd) {

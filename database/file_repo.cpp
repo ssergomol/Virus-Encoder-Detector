@@ -38,7 +38,7 @@ void FileRepo::insertFile(File file) {
     sqlite3_exec(store->getDB(), sql, store->callback, 0, 0);
 }
 
-void FileRepo::removeOutOfList(int pid) {
+void FileRepo::removeFromDB(int pid) {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(store->getDB(), "DELETE FROM modified_files WHERE pid = ?", -1, &stmt, nullptr);
 
@@ -50,6 +50,7 @@ void FileRepo::removeOutOfList(int pid) {
 
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
+    LOG_F(INFO, "Files modified by process %d are deleted from the database", pid);
     const char *sql = "SELECT * from modified_files;";
     sqlite3_exec(store->getDB(), sql, store->callback, 0, 0);
 }
@@ -72,7 +73,7 @@ void FileRepo::recoverFiles(int pid) {
 
         // decode encoded file
         Encoder::encodeFile(path);
-        printf("Path decoded: '%s'\n", pathString);
+        LOG_F(INFO, "Path %s recovered", pathString);
         rc = sqlite3_step(stmt);
     }
 

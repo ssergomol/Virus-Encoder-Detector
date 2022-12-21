@@ -14,7 +14,7 @@ public:
 
     // Remove files from database which
     // were modified by process "pid"
-    void removeOutOfList(int pid);
+    void removeFromDB(int pid);
 
     // Decode files encoded by process "pid"
     void recoverFiles(int pid);
