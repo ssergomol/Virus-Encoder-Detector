@@ -18,10 +18,9 @@
 #include <cstring>
 #include <string>
 #include <csignal>
-#include <sqlite3.h>
+#include <sqlite3/sqlite3.h>
 #include "../database/db.hpp"
 #include "../database/file_repo.hpp"
-#include <mutex>
 
 
 namespace fs = std::filesystem;
@@ -46,7 +45,6 @@ class Detector {
 
     int eventsCount = 0;
 
-    std::mutex mutex;
 
 public:
     Storage *DB;

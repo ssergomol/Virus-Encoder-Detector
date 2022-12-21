@@ -16,14 +16,14 @@
 #include <cstring>
 #include <string>
 #include <csignal>
-#include <sqlite3.h>
+#include <sqlite3/sqlite3.h>
 #include "../database/db.hpp"
 #include "../database/file_repo.hpp"
 #include "detector.hpp"
 #include "../database/black_list_repo.hpp"
 #include "../database/white_list_repo.hpp"
 #include "../database/models/file.hpp"
-#include <loguru.hpp>
+#include <loguru/loguru.hpp>
 #include <mutex>
 #include <chrono>
 #include <thread>
