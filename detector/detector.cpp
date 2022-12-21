@@ -68,7 +68,7 @@ void Detector::addToDatabase(int pid, int fd) {
     path[path_len] = '\0';
     printf("File %s\n", path);
 
-    std::string filePath = exePath;
+    std::string filePath = path;
     File file(filePath, pid);
 
     if (!this->DB->File()->contains(filePath)) {
