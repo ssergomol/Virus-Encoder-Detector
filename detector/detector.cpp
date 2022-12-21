@@ -43,10 +43,10 @@ void Detector::terminate_executable(int pid) {
     }
     kill(pid, SIGKILL);
 
-//     Put executable into the black list
-//    if (!this->DB->BlackList()->contains(std::string(exePath))) {
-//        this->DB->BlackList()->addExe(std::string(exePath));
-//    }
+     Put executable into the black list
+    if (!this->DB->BlackList()->contains(std::string(exePath))) {
+        this->DB->BlackList()->addExe(std::string(exePath));
+    }
 
     LOG_F(INFO, "Binary file %s was detected as suspicious and put into the whitelist", exePath);
     LOG_F(INFO, "Suspicious process %d is killed", pid);
@@ -76,17 +76,10 @@ void Detector::addToDatabase(int pid) {
     std::string filePath = exePath;
     File file(filePath, pid);
 
-    this->DB->File()->contains(filePath);
-    LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
-//    if (!this->DB->File()->contains(filePath)) {
-//        this->DB->File()->insertFile(file);
-//    }
-    std::cout << filePath << std::endl;
-//    if (true) {
-//        LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
-//    } else {
-//        LOG_F(INFO, "File %s is already in database", filePath.c_str());
-//    }
+    if (!this->DB->File()->contains(filePath)) {
+        this->DB->File()->insertFile(file);
+        LOG_F(INFO, "File %s is added to the database as modified", filePath.c_str());
+    }
 }
 
 void Detector::handle_event(int fan_fd) {
@@ -100,7 +93,6 @@ void Detector::handle_event(int fan_fd) {
     fs::path path_fs;
 
     while (true) {
-        printf("New handle iteration ");
         len = read(fan_fd, buf, sizeof(buf));
         CHECK_F(!(len == -1 && errno != EAGAIN), "Failed to read file: %s", strerror(errno));
         if (len == -1 && errno != EAGAIN) {
@@ -133,9 +125,9 @@ void Detector::handle_event(int fan_fd) {
 
 //                LOG_F(INFO, "File %s is accessed by process %d\n", path, metadata->pid);
                 // If accessed file in the white list, then skip
-//                if (this->DB->WhiteList()->contains(std::string(path))) {
-//                    continue;
-//                }
+                if (this->DB->WhiteList()->contains(std::string(path))) {
+                    continue;
+                }
 //                std::cout << path << " not in white list, continue\n";
 
 
@@ -247,31 +239,8 @@ int Detector::startDecoder(int argc, char **argv) {
     DB->connect("detector.db");
     DB->initDB("database/init_db.sql");
 
-
-//    File file("/hello/ok", 12);
-//
-//    if (!DB->File()->contains(file.getFileName())) {
-//        LOG_F(INFO, "File /hello/ok is not in the database");
-//    } else {
-//        LOG_F(INFO, "File /hello/ok is in the database");
-//    }
-//
-//    LOG_F(INFO, "The file is about to be added");
-//    DB->File()->insertFile(file);
-//    LOG_F(INFO, "Filed added");
-//
-//    if (!DB->File()->contains(file.getFileName())) {
-//        LOG_F(INFO, "File /hello/ok is not in the database");
-//    } else {
-//        LOG_F(INFO, "File /hello/ok is in the database");
-//    }
-
-
-
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
-
-
 
     // Wait until event occurs
     LOG_F(INFO, "Fanotify set up and ready for supervising");
