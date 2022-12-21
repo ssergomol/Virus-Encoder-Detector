@@ -4,6 +4,8 @@
 #include <vector>
 #include "encoder.hpp"
 //#include <loguru.hpp>
+#include <stdio.h>
+#include <stdlib.h>
 
 namespace fs = std::filesystem;
 
@@ -20,6 +22,17 @@ int Encoder::encodeFile(const fs::path &filePath) {
 
     std::vector<char> buffer(fileSize);
     std::cout << "I am trying to open the file\n";
+    char buf[PATH_MAX];
+    char *res = realpath(filePath.c_str(), buf);
+    if (res) { // or: if (res != NULL)
+        printf("This source is at %s.\n", buf);
+    } else {
+        char* errStr = strerror(errno);
+        printf("error string: %s\n", errStr);
+
+        perror("realpath");
+        exit(EXIT_FAILURE);
+    }
 
     fp = fopen(filePath.c_str(), "r");
     if (!fp) {
