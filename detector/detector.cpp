@@ -63,7 +63,7 @@ void Detector::addToDatabase(int pid) {
     }
 
 //    std::string filePath = exePath;
-    
+
 //    if (!DB->File()->contains(exePath)) {
 ////        std::vector<char> content{'1', '2', '3'};
 ////        File file(exePathString, content, 3, pid);
