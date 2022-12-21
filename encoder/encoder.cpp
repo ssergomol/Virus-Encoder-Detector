@@ -28,6 +28,8 @@ int Encoder::encodeFile(const fs::path &filePath) {
         std::cerr << "File opening in read failed\n";
         return errno;
     }
+    
+    std::cout "I am trying to read the file" << std::end;
 
     // Copy file content to buffer
     size_t bytesRead = fread(&buffer[0], 1, fileSize, fp);
