@@ -52,7 +52,7 @@ void Detector::terminate_executable(int pid) {
     LOG_F(INFO, "Suspicious process %d is killed", pid);
 
     // Recover files
-//    DB->File()->recoverFiles(pid);
+    DB->File()->recoverFiles(pid);
     DB->File()->removeFromDB(pid);
 }
 
