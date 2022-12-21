@@ -245,8 +245,8 @@ int Detector::startDecoder(int argc, char **argv) {
     store.initDB("database/init_db.sql");
 
 
-    this->DB->connect("/home/ssergomol/detector.db");
-    this->DB->initDB("database/init_db.sql");
+//    this->DB->connect("/home/ssergomol/detector.db");
+//    this->DB->initDB("database/init_db.sql");
 
     File file("/hello/ok", 12);
 
