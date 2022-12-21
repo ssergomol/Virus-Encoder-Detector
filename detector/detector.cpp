@@ -227,6 +227,7 @@ int Detector::startDecoder(int argc, char **argv) {
         delete(DB);
         return EXIT_FAILURE;
     }
+    close(fan_fd);
 
     sqlite3 *db;
 //    int rc = sqlite3_open_v2(url.c_str(), &db,  SQLITE_OPEN_FULLMUTEX, nullptr);
