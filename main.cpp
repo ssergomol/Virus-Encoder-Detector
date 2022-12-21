@@ -15,6 +15,9 @@
 #include <yaml-cpp/node/parse.h>
 #include <yaml-cpp/yaml.h>
 
+namespace fs = std::filesystem;
+
+
 int main(int argc, char** argv) {
     sqlite3_shutdown();
     sqlite3_config(SQLITE_CONFIG_SERIALIZED);
@@ -97,6 +100,8 @@ int main(int argc, char** argv) {
 //    DB->File()->insertFile(File("/home/ssergomol/hw", 10));
 //    DB->File()->recoverFiles(10);
 //    DB->File()->recoverFiles(10);
+//    fs::path filePath = "../test/file.txt";
+//    Encoder::encodeFile(filePath);
     Detector detector;
     detector.startDecoder(argc, argv);
 //    database->close();
