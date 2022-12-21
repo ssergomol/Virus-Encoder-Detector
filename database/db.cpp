@@ -61,8 +61,8 @@ void Storage::initDB(const std::string &initFileName) {
     std::vector<char> buffer(size);
     if (file.read(buffer.data(), size)) {
         std::string init(buffer.begin(), buffer.end());
-            const char* sql = "SELECT * from files;";
-            const char* insert = "INSERT INTO files(path, content, size) VALUES (\"/home/ssergomol/\", '54455354', 25);";
+//            const char* sql = "SELECT * from files;";
+//            const char* insert = "INSERT INTO files(path, content, size) VALUES (\"/home/ssergomol/\", '54455354', 25);";
         int rc = sqlite3_exec(this->db, init.c_str(),
                               this->callback, nullptr, &zErrMsg);
 

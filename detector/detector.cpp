@@ -205,10 +205,6 @@ int Detector::startDecoder(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    DB = new Storage();
-    DB->connect("detector.db");
-    DB->initDB("database/init_db.sql");
-
     pollfd fds{fan_fd, POLLIN};
     int counter = 0;
 
