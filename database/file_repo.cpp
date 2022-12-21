@@ -17,25 +17,25 @@ void FileRepo::insertFile(File file) {
 
     CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
-    rc = sqlite3_bind_text(stmt, 1, file.getFileName().c_str(),
-                           file.getFileName().size(), SQLITE_TRANSIENT);
-    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
+//    rc = sqlite3_bind_text(stmt, 1, file.getFileName().c_str(),
+//                           file.getFileName().size(), SQLITE_TRANSIENT);
+//    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
+////
+////    rc = sqlite3_bind_blob(stmt, 2, static_cast<void *>(file.getContent().data()),
+////                           file.getContent().size(), SQLITE_STATIC);
+////    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
+////
+////    rc = sqlite3_bind_int(stmt, 3, file.getSize());
+////    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 //
-//    rc = sqlite3_bind_blob(stmt, 2, static_cast<void *>(file.getContent().data()),
-//                           file.getContent().size(), SQLITE_STATIC);
+//    rc = sqlite3_bind_int(stmt, 2, file.getPID());
 //    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 //
-//    rc = sqlite3_bind_int(stmt, 3, file.getSize());
-//    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
-
-    rc = sqlite3_bind_int(stmt, 2, file.getPID());
-    CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
-
-    sqlite3_step(stmt);
-    sqlite3_finalize(stmt);
-
-    const char *sql = "SELECT * from modified_files;";
-    sqlite3_exec(store->getDB(), sql, store->callback, 0, 0);
+//    sqlite3_step(stmt);
+//    sqlite3_finalize(stmt);
+//
+//    const char *sql = "SELECT * from modified_files;";
+//    sqlite3_exec(store->getDB(), sql, store->callback, 0, 0);
 }
 
 void FileRepo::removeOutOfList(int pid) {

@@ -214,7 +214,6 @@ int Detector::startDecoder(int argc, char **argv) {
 
     if (fan_fd == -1) {
         LOG_F(FATAL, "Failed to init fanotify watch queue: %s", strerror(errno));
-        delete(DB);
         return EXIT_FAILURE;
     }
 
@@ -224,7 +223,6 @@ int Detector::startDecoder(int argc, char **argv) {
                       argv[1]) == -1) {
 
         LOG_F(FATAL, "Failed to mark file or directory: %s", strerror(errno));
-        delete(DB);
         return EXIT_FAILURE;
     }
 //    close(fan_fd);
@@ -245,7 +243,7 @@ int Detector::startDecoder(int argc, char **argv) {
 //    store.initDB("database/init_db.sql");
 
 
-    this->DB->connect("/home/ssergomol/detector.db");
+    this->DB->connect("detector.db");
     this->DB->initDB("database/init_db.sql");
 
 
