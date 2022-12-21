@@ -9,10 +9,10 @@ namespace fs = std::filesystem;
 
 int Encoder::encodeFile(const fs::path &filePath) {
     std::cout << "I am in encode file func\n";
-    if (!fs::exists(filePath)) {
-        std::cerr << "File doesn't exist" << std::endl;
-        return EXIT_FAILURE;
-    }
+//    if (!fs::exists(filePath)) {
+//        std::cerr << "File doesn't exist" << std::endl;
+//        return EXIT_FAILURE;
+//    }
 
     std::error_code errorCode;
     std::uintmax_t fileSize = fs::file_size(filePath, errorCode);
