@@ -1,4 +1,4 @@
-//#include "detector/detector.hpp"
+#include "detector/detector.hpp"
 #include "database/db.hpp"
 #include <loguru.hpp>
 
