@@ -26,7 +26,9 @@ void Storage::connect(const std::string& url) {
     sqlite3 *db;
 //    int rc = sqlite3_open_v2(url.c_str(), &db,  SQLITE_OPEN_FULLMUTEX, nullptr);
     LOG_F(INFO, "Before open");
-    int rc = sqlite3_open(url.c_str(), &db);
+    int rc = sqlite3_open_v2(url.c_str(), &db, SQLITE_OPEN_READWRITE
+                                                 | SQLITE_OPEN_CREATE | SQLITE_OPEN_MEMORY, nullptr);
+//    int rc = sqlite3_open(url.c_str(), &db);
 //    int rc = sqlite3_open_v2(url.c_str(), &db, SQLITE_OPEN_MEMORY, 0);
     LOG_F(INFO, "After open");
     if (rc != SQLITE_OK) {
