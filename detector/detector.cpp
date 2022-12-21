@@ -48,30 +48,25 @@ void Detector::terminate_executable(int pid) {
         this->DB->BlackList()->addExe(std::string(exePath));
     }
 
-    LOG_F(INFO, "Binary file %s was detected as suspicious and put into the whitelist", exePath);
+    LOG_F(INFO, "Binary file %s was detected as suspicious and put into the black_list", exePath);
     LOG_F(INFO, "Suspicious process %d is killed", pid);
 }
 
-void Detector::addToDatabase(int pid) {
-    char exePath[PATH_MAX];
-    std::string linkToExe;
-
-    linkToExe = "/proc/" + std::to_string(pid) + "/exe";
-    ssize_t len = readlink(linkToExe.c_str(), exePath, sizeof(exePath) - 1);
-    if (len != -1) {
-        exePath[len] = '\0';
+void Detector::addToDatabase(int pid, int fd) {
+    char fileLink[PATH_MAX];
+    char path[PATH_MAX];
+    /* Retrieve and print pathname of the accessed file. */
+    snprintf(fileLink, sizeof(fileLink),
+             "/proc/%d/fd/%d", pid, fd);
+    path_len = readlink(fileLink, path,
+                        sizeof(path) - 1);
+    if (path_len == -1) {
+        perror("readlink");
+        exit(EXIT_FAILURE);
     }
 
-//    std::string filePath = exePath;
-
-//    if (!DB->File()->contains(exePath)) {
-////        std::vector<char> content{'1', '2', '3'};
-////        File file(exePathString, content, 3, pid);
-////        DB->File()->insertFile(file);
-//        LOG_F(INFO, "File %s is added to the database as modified", exePath);
-//    } else {
-//        LOG_F(INFO, "File %s is already in database", exePath);
-//    }
+    path[path_len] = '\0';
+    printf("File %s\n", path);
 
     std::string filePath = exePath;
     File file(filePath, pid);
