@@ -228,36 +228,41 @@ int Detector::startDecoder(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
+    sqlite3 *db;
+//    int rc = sqlite3_open_v2(url.c_str(), &db,  SQLITE_OPEN_FULLMUTEX, nullptr);
+    LOG_F(INFO, "Before open");
+    int rc = sqlite3_open("detector.db", &db);
+    LOG_F(INFO, "After open");
 //    this->DB = new Storage();
-    sqlite3_shutdown();
-    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
-    sqlite3_initialize();
+//    sqlite3_shutdown();
+//    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+//    sqlite3_initialize();
 
-    Storage store;
-    store.connect("detector.db");
-    store.initDB("database/init_db.sql");
+//    Storage store;
+//    store.connect("detector.db");
+//    store.initDB("database/init_db.sql");
 
 
 //    this->DB->connect("/home/ssergomol/detector.db");
 //    this->DB->initDB("database/init_db.sql");
 
-    File file("/hello/ok", 12);
-
-    if (!store.File()->contains(file.getFileName())) {
-        LOG_F(INFO, "File /hello/ok is not in the database");
-    } else {
-        LOG_F(INFO, "File /hello/ok is in the database");
-    }
-
-    LOG_F(INFO, "The file is about to be added");
-    store.File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
-
-    if (!store.File()->contains(file.getFileName())) {
-        LOG_F(INFO, "File /hello/ok is not in the database");
-    } else {
-        LOG_F(INFO, "File /hello/ok is in the database");
-    }
+//    File file("/hello/ok", 12);
+//
+//    if (!store.File()->contains(file.getFileName())) {
+//        LOG_F(INFO, "File /hello/ok is not in the database");
+//    } else {
+//        LOG_F(INFO, "File /hello/ok is in the database");
+//    }
+//
+//    LOG_F(INFO, "The file is about to be added");
+//    store.File()->insertFile(file);
+//    LOG_F(INFO, "Filed added");
+//
+//    if (!store.File()->contains(file.getFileName())) {
+//        LOG_F(INFO, "File /hello/ok is not in the database");
+//    } else {
+//        LOG_F(INFO, "File /hello/ok is in the database");
+//    }
 
 
 
