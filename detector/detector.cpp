@@ -250,7 +250,7 @@ int Detector::startDecoder(int argc, char **argv) {
     File file("/hello/ok", 12);
     DB->File()->insertFile(file);
 
-    if (!DB.File()->contains(file.getFileName())) {
+    if (!DB->File()->contains(file.getFileName())) {
         LOG_F(INFO, "File /hello/ok is not in the database");
     } else {
         LOG_F(INFO, "File /hello/ok is in the database");
