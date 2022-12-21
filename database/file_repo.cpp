@@ -2,10 +2,10 @@
 #include <filesystem>
 #include "file_repo.hpp"
 #include "models/file.hpp"
-#include <sqlite3.h>
+#include <sqlite3/sqlite3.h>
 #include "db.hpp"
 #include "../encoder/encoder.hpp"
-#include <loguru.hpp>
+#include <loguru/loguru.hpp>
 #include <cstring>
 #include <limits.h>
 

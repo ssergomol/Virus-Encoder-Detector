@@ -1,6 +1,6 @@
 #ifndef VIRUS_ENCODER_DETECTOR_DB_HPP
 #define VIRUS_ENCODER_DETECTOR_DB_HPP
-#include <sqlite3.h>
+#include <sqlite3/sqlite3.h>
 #include <iostream>
 
 class FileRepo;

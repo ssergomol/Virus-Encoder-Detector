@@ -1,23 +1,25 @@
 CXX = g++
 cc = gcc
 
-LIB_SQL = -lpthread -ldl
-LIB = -lpthread -ldl -std=c++20 -lyaml-cpp -DSQLITE_DEFAULT_FILE_PERMISSIONS=600
+BUILT_LIB = libs 
+LIB_PATH = include
+LIB_SQL = -lpthread -ldl -I$(LIB_PATH)
+LIB = -lpthread -ldl -std=c++20 -lyaml-cpp -DSQLITE_DEFAULT_FILE_PERMISSIONS=600 -I$(LIB_PATH)
 BIN = sqlite exe
 TARGET = test
 
 all : $(BIN)
 
-sqlite : libs/sqlite3/sqlite3.c libs/sqlite3/shell.c
+sqlite : $(LIB_PATH)/sqlite3/sqlite3.c $(LIB_PATH)/sqlite3/shell.c
 	$(cc) -o $@ $^ $(LIB_SQL)
 
 exe : main.cpp database/db.cpp database/file_repo.cpp database/models/file.cpp database/white_list_repo.cpp database/black_list_repo.cpp detector/detector.cpp encoder/encoder.cpp sqlite3.o loguru.o 
 	$(CXX) -o $@ $^ $(LIB)
 
-sqlite3.o : libs/sqlite3/sqlite3.c
+sqlite3.o : $(LIB_PATH)/sqlite3/sqlite3.c
 	$(cc) -o $@ -c $^
 
-loguru.o : libs/loguru/loguru.cpp
+loguru.o : $(LIB_PATH)/loguru/loguru.cpp
 	$(CXX) -o $@ -c $^
  
 run:

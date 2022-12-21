@@ -1,9 +1,9 @@
 #include "black_list_repo.hpp"
 #include "db.hpp"
-#include <loguru.hpp>
+#include <loguru/loguru.hpp>
 
 #include <iostream>
-#include <sqlite3.h>
+#include <sqlite3/sqlite3.h>
 #include <vector>
 
 void BlackListRepo::addExe(const std::string &path) {

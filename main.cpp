@@ -1,6 +1,6 @@
 #include "detector/detector.hpp"
 #include "database/db.hpp"
-#include <loguru.hpp>
+#include <loguru/loguru.hpp>
 
 #include "database/file_repo.hpp"
 #include "database/models/file.hpp"

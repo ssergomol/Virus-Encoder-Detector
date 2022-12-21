@@ -3,9 +3,9 @@
 #include "white_list_repo.hpp"
 #include "black_list_repo.hpp"
 #include <stdio.h>
-#include <sqlite3.h>
+#include <sqlite3/sqlite3.h>
 #include <fstream>
-#include <loguru.hpp>
+#include <loguru/loguru.hpp>
 
 
 int Storage::callback(void *, int argc, char **argv, char **azColName) {
