@@ -17,7 +17,19 @@ void FileRepo::insertFile(File file) {
 
     CHECK_F(rc == SQLITE_OK, "Prepare failed: %s\n", sqlite3_errmsg(store->getDB()));
 
-    rc = sqlite3_bind_text(stmt, 1, file.getFileName().c_str(),
+    char buf[PATH_MAX];
+    char *res = realpath(file.getFileName().c_str(), buf);
+    if (res) { // or: if (res != NULL)
+        printf("This source is at %s.\n", buf);
+    } else {
+        char* errStr = strerror(errno);
+        printf("error string: %s\n", errStr);
+
+        perror("realpath");
+        exit(EXIT_FAILURE);
+    }
+
+    rc = sqlite3_bind_text(stmt, 1, buf,
                            file.getFileName().size(), SQLITE_TRANSIENT);
     CHECK_F(rc == SQLITE_OK, "Bind failed: %s\n", sqlite3_errmsg(store->getDB()));
 //
