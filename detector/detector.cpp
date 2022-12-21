@@ -219,7 +219,7 @@ int Detector::startDecoder(int argc, char **argv) {
     }
 
     // Add dir to watch queue
-    if (fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
+    if (fanotify_mark(fan_fd, FAN_CLOEXEC | FAN_MARK_ADD | FAN_MARK_MOUNT,
                       FAN_ACCESS_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
                       argv[1]) == -1) {
 
