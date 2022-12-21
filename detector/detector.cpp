@@ -63,6 +63,7 @@ void Detector::addToDatabase(int pid) {
     }
 
 //    std::string filePath = exePath;
+    
 //    if (!DB->File()->contains(exePath)) {
 ////        std::vector<char> content{'1', '2', '3'};
 ////        File file(exePathString, content, 3, pid);
@@ -247,23 +248,23 @@ int Detector::startDecoder(int argc, char **argv) {
     DB->initDB("database/init_db.sql");
 
 
-    File file("/hello/ok", 12);
-
-    if (!DB->File()->contains(file.getFileName())) {
-        LOG_F(INFO, "File /hello/ok is not in the database");
-    } else {
-        LOG_F(INFO, "File /hello/ok is in the database");
-    }
-
-    LOG_F(INFO, "The file is about to be added");
-    DB->File()->insertFile(file);
-    LOG_F(INFO, "Filed added");
-
-    if (!DB->File()->contains(file.getFileName())) {
-        LOG_F(INFO, "File /hello/ok is not in the database");
-    } else {
-        LOG_F(INFO, "File /hello/ok is in the database");
-    }
+//    File file("/hello/ok", 12);
+//
+//    if (!DB->File()->contains(file.getFileName())) {
+//        LOG_F(INFO, "File /hello/ok is not in the database");
+//    } else {
+//        LOG_F(INFO, "File /hello/ok is in the database");
+//    }
+//
+//    LOG_F(INFO, "The file is about to be added");
+//    DB->File()->insertFile(file);
+//    LOG_F(INFO, "Filed added");
+//
+//    if (!DB->File()->contains(file.getFileName())) {
+//        LOG_F(INFO, "File /hello/ok is not in the database");
+//    } else {
+//        LOG_F(INFO, "File /hello/ok is in the database");
+//    }
 
 
 
@@ -279,19 +280,19 @@ int Detector::startDecoder(int argc, char **argv) {
 
 
 
-//    while (true) {
-//        int pollNum = poll(&fds, 1, -1);
-//        if (pollNum == -1) {
-//
-//            LOG_F(FATAL, strerror(errno));
-//            delete(DB);
-//            return EXIT_FAILURE;
-//        }
-//
-//        if (fds.revents & POLLIN) {
-//            handle_event(fds.fd);
-//        }
-//    }
+    while (true) {
+        int pollNum = poll(&fds, 1, -1);
+        if (pollNum == -1) {
+
+            LOG_F(FATAL, strerror(errno));
+            delete(DB);
+            return EXIT_FAILURE;
+        }
+
+        if (fds.revents & POLLIN) {
+            handle_event(fds.fd);
+        }
+    }
 
     delete(DB);
     return EXIT_SUCCESS;
