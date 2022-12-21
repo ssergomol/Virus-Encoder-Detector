@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <vector>
 #include "encoder.hpp"
+#include <loguru.hpp>
 
 namespace fs = std::filesystem;
 
