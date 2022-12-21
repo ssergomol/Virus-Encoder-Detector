@@ -228,24 +228,28 @@ int Detector::startDecoder(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    this->DB = new Storage();
+//    this->DB = new Storage();
+    Storage store;
+    store.connect("detector.db");
+    store.init("database/init_db.sql");
 
-    this->DB->connect("/home/ssergomol/detector.db");
-    this->DB->initDB("database/init_db.sql");
+
+//    this->DB->connect("/home/ssergomol/detector.db");
+//    this->DB->initDB("database/init_db.sql");
 
     File file("/hello/ok", 12);
 
-    if (!this->DB->File()->contains(file.getFileName())) {
+    if (!store.File()->contains(file.getFileName())) {
         LOG_F(INFO, "File /hello/ok is not in the database");
     } else {
         LOG_F(INFO, "File /hello/ok is in the database");
     }
 
     LOG_F(INFO, "The file is about to be added");
-    this->DB->File()->insertFile(file);
+    store.File()->insertFile(file);
     LOG_F(INFO, "Filed added");
 
-    if (!this->DB->File()->contains(file.getFileName())) {
+    if (!store.File()->contains(file.getFileName())) {
         LOG_F(INFO, "File /hello/ok is not in the database");
     } else {
         LOG_F(INFO, "File /hello/ok is in the database");
@@ -281,6 +285,6 @@ int Detector::startDecoder(int argc, char **argv) {
 //        }
 //    }
 
-    delete(DB);
+//    delete(DB);
     return EXIT_SUCCESS;
 }
