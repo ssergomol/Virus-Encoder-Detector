@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <vector>
 #include "encoder.hpp"
-#include <loguru.hpp>
+//#include <loguru.hpp>
 
 namespace fs = std::filesystem;
 
 int Encoder::encodeFile(const fs::path &filePath) {
     if (!fs::exists(filePath)) {
-        LOG_F(ERROR, "File doesn't exist");
+        std::err << "File doesn't exist" << std::endl;
         return EXIT_FAILURE;
     }
 
