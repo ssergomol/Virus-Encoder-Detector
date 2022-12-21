@@ -1,4 +1,4 @@
-#include "detector/detector.hpp"
+//#include "detector/detector.hpp"
 #include "database/db.hpp"
 #include <loguru.hpp>
 
@@ -6,7 +6,7 @@
 #include "database/models/file.hpp"
 #include "database/black_list_repo.hpp"
 #include "database/white_list_repo.hpp"
-#include "detector/detector.hpp"
+//#include "detector/detector.hpp"
 #include "encoder/encoder.hpp"
 
 #include <iostream>
@@ -91,6 +91,12 @@ int main(int argc, char** argv) {
 //    database->File()->insertFile(file);
 
 //
+//    Storage* DB = new Storage();
+//    DB->connect("detector.db");
+//    DB->initDB("database/init_db.sql");
+//    DB->File()->insertFile(File("/home/ssergomol/hw", 10));
+//    DB->File()->recoverFiles(10);
+//    DB->File()->recoverFiles(10);
     Detector detector;
     detector.startDecoder(argc, argv);
 //    database->close();

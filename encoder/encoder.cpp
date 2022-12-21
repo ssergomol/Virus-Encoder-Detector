@@ -7,6 +7,11 @@
 namespace fs = std::filesystem;
 
 int Encoder::encodeFile(const fs::path &filePath) {
+    if (!fs::exists(filePath)) {
+        LOG_F(ERROR, "File doesn't exist");
+        return EXIT_FAILURE;
+    }
+
     std::error_code errorCode;
     std::uintmax_t fileSize = fs::file_size(filePath, errorCode);
     FILE *fp;
