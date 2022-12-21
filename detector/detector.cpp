@@ -57,7 +57,7 @@ void Detector::addToDatabase(int pid, int fd) {
     char path[PATH_MAX];
     /* Retrieve and print pathname of the accessed file. */
     snprintf(fileLink, sizeof(fileLink),
-             "/proc/%d/fd/%d", pid, fd);
+             "/proc/self/fd/%d", fd);
     int path_len = readlink(fileLink, path,
                         sizeof(path) - 1);
     if (path_len == -1) {
