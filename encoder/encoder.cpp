@@ -29,7 +29,7 @@ int Encoder::encodeFile(const fs::path &filePath) {
         return errno;
     }
 
-    std::cout << "I am trying to read the file" << std::end;
+    std::cout << "I am trying to read the file\n";
 
     // Copy file content to buffer
     size_t bytesRead = fread(&buffer[0], 1, fileSize, fp);
